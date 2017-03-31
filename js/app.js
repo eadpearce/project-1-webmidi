@@ -27,10 +27,12 @@ $( () => {
   function checkMatch() {
     if (playerNotes[0] === pcNotes[0] && playerNotes[1] === pcNotes[1] && playerNotes[2] === pcNotes[2]) {
       console.log('correct! yuo are smart');
-
-      pcNotes[0] = null;
-      pcNotes[1] = null;
-      pcNotes[2] = null;
+    }
+    // reset the arrays
+    for (var i = 0; i < pcNotes.length; i++) {
+      pcNotes[i] = null;
+      playerNotes[i] = null;
+      console.log(pcNotes);
     }
   }
 
@@ -49,6 +51,7 @@ $( () => {
         console.log('finish');
         // check if match
         checkMatch();
+        time = 0;
       }
     }
   });
