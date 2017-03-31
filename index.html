@@ -5,28 +5,46 @@
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/animate.css">
   <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Cardo" rel="stylesheet">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
   <title>WDI Project 1: Pitch Recognition Game</title>
 </head>
 <body>
-  <section>
-    <ul class="black">
-      <li class="black" id="1"></li>
-      <li class="black" id="3"></li>
-      <li class="black" id="6"></li>
-      <li class="black" id="8"></li>
-      <li class="black" id="10"></li>
+  <div class="container">
+    <ul class="black-keys">
+      <li class="keys black" id="1"><audio id="01-db"></audio></li>
+      <li class="keys black" id="3"><audio id="03-eb"></audio></li>
+      <li class="keys black" id="6"><audio id="06-gb"></audio></li>
+      <li class="keys black" id="8"><audio id="08-ab"></audio></li>
+      <li class="keys black" id="10"><audio id="10-bb"></audio></li>
     </ul>
-    <ul class="white">
-      <li class="white left" id="0"></li>
-      <li class="white middle" id="2"></li>
-      <li class="white right" id="4"></li>
-      <li class="white left" id="5"></li>
-      <li class="white middle" id="7"></li>
-      <li class="white middle" id="9"></li>
-      <li class="white right" id="11"></li>
+    <ul class="white-keys">
+      <li class="keys white" id="0"><audio id="00-c"></audio></li>
+      <li class="keys white" id="2"><audio id="02-d"></audio></li>
+      <li class="keys white" id="4"><audio id="04-e"></audio></li>
+      <li class="keys white" id="5"><audio id="05-f"></audio></li>
+      <li class="keys white" id="7"><audio id="07-g"></audio></li>
+      <li class="keys white" id="9"><audio id="09-a"></audio></li>
+      <li class="keys white" id="11"><audio id="11-b"></audio></li>
     </ul>
-  </section>
+    <audio id="test" src="">
+      
+    </audio>
+    <!-- <ul class="label">
+      <li>C</li>
+      <li>C&#x266f;/D&#x266d;</li>
+      <li>D</li>
+      <li>D&#x266f;/E&#x266d;</li>
+      <li>E</li>
+      <li>F</li>
+      <li>F&#x266f;/G&#x266d;</li>
+      <li>G</li>
+      <li>G&#x266f;/A&#x266d;</li>
+      <li>A</li>
+      <li>A&#x266f;/B&#x266d;</li>
+      <li>B</li>
+    </ul> -->
+  </div>
 </body>
 </html>
