@@ -11,7 +11,7 @@ $( () => {
 
   $keys.on('mousedown', function(e) {
     console.log(e.target.id);
-    audio.src = 'sounds/00-c.ogg';
+    audio.src = 'sounds/' + e.target.id +'.ogg';
     audio.play();
     // this.src = 'sounds/' + $audio[this.id].id + '.ogg';
     // $audio[this.id].play();
