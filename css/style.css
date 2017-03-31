@@ -7,20 +7,37 @@ body {
   font-weight: bold;
   font-size: 16px;
 }
-.container {
+.keyboard {
   width: 306px;
   height: 300px;
+  float: left;
+}
+.container {
+  background-color: white;
+  padding: 20px;
+  width: 470px;
+  height: 300px;
   margin: 200px auto;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+.controls {
+  text-align: center;
+  float: right;
 }
 .start {
   font-family: 'Cardo', serif;
+  font-weight:bold;
   line-height: 1.5em;
   width: 100px;
   background-color: white;
   border: 2px solid black;
+  border-radius: 3px;
   float: right;
-  margin-right: -150px;
   font-size: 18px;
+}
+.start:hover {
+  background: #ddd;
 }
 .black-keys {
   margin-left: 26px;
