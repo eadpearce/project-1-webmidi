@@ -4,12 +4,24 @@
 body {
   background: lightgrey;
 }
-/*.keys {
+section {
+  width: 304px;
+  margin: 200px auto;
+}
+.keys {
   margin: 200px auto;
   width: 400px;
 }
+ul.black {
+  margin-left: 26px;
+  position: absolute;
+}
+li.black:nth-child(3) {
+  margin-left: 45px;
+}
 li {
   border: 1px solid black;
+  border-radius: 3px;
   display: inline-block;
   width: 40px;
   height: 200px;
@@ -17,16 +29,29 @@ li {
 li:before {
   content: '\00a0';
 }
-
 li.white {
   background: white;
   z-index: 0;
 }
+li.white:hover {
+  background: #ddd;
+}
+li.black:hover {
+  background: #555;
+}
 li.black {
   background: black;
+  width: 30px;
+  margin-right: 10px;
   height: 100px;
   z-index: 2;
-}*/
+}
+.depress-black {
+  height: 105px;
+}
+.depress-white {
+  height: 205px;
+}
 /*.left {
   width: 50px;
   margin-right: -20px;
@@ -34,4 +59,4 @@ li.black {
 .right {
   width: 50px;
   margin-left: -20px;
-}*/
+}
