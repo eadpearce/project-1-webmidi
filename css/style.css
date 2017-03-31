@@ -4,7 +4,7 @@
 body {
   background: lightgrey;
 }
-.keys {
+/*.keys {
   margin: 200px auto;
   width: 400px;
 }
@@ -26,7 +26,7 @@ li.black {
   background: black;
   height: 100px;
   z-index: 2;
-}
+}*/
 /*.left {
   width: 50px;
   margin-right: -20px;
