@@ -1,119 +1,148 @@
 // piano samples edited from those provided here http://theremin.music.uiowa.edu/MISpiano.html
 
-// const allKeys = [0,1,2,3,4,5,6,7,8,9,10,11];
-// const blackKeys = [1,3,6,8,10];
-// const whiteKeys = [0,2,4,5,7,9,11];
+// const allnotes = [0,1,2,3,4,5,6,7,8,9,10,11];
+// const blacknotes = [1,3,6,8,10];
+// const whitenotes = [0,2,4,5,7,9,11];
 
-// level1 uses only 3 of the white keys and a phrase length of 3
+// level1 uses only 3 of the white notes and a phrase length of 3
 // level is 3 turns long
 const level1 = {
-  pcNotes: [null, null, null],
-  playerNotes: [null, null, null],
-  keys: [0,2,4],
-  length: 3
+  notes: [0,2,4],
+  phraseLength: 3
 };
-// level2 uses 5 whites keys
+// level2 uses 5 whites notes
 const level2 = {
-  pcNotes: [null, null, null],
-  playerNotes: [null, null, null],
-  keys: [0,2,4,5,7],
-  length: 5
+  notes: [0,2,4,5,7],
+  phraseLength: 5
 };
-// level3 uses all the white keys
+// level3 uses all the white notes
 const level3 = {
-  pcNotes: [null, null, null],
-  playerNotes: [null, null, null],
-  keys: [0,2,4,5,7,9,11],
-  length: 5
+  notes: [0,2,4,5,7,9,11],
+  phraseLength: 5
 };
-// uses all white keys and phrase length of 4
+// uses all white notes and phrase length of 4
 const level4 = {
-  pcNotes: [null, null, null, null],
-  playerNotes: [null, null, null, null],
-  keys: [0,2,4,5,7,9,11],
-  length: 5
+  notes: [0,2,4,5,7,9,11],
+  phraseLength: 5
 };
-// uses black and white keys up to E, phrase length of 4
+// uses black and white notes up to E, phrase length of 4
 const level5 = {
-  pcNotes: [null, null, null, null],
-  playerNotes: [null, null, null, null],
-  keys: [0,1,2,3,4],
-  length: 3
+  notes: [0,1,2,3,4],
+  phraseLength: 3
 };
-// uses all keys
+// uses all notes
 const level6 = {
-  pcNotes: [null, null, null, null],
-  playerNotes: [null, null, null, null],
-  keys: [0,1,2,3,4,5,6,7,8,9,10,11],
-  length: 5
+  notes: [0,1,2,3,4,5,6,7,8,9,10,11],
+  phraseLength: 5
 };
-// uses all keys, phrase length of 5
+// uses all notes, phrase length of 5
 const level7 = {
-  pcNotes: [null, null, null, null, null],
-  playerNotes: [null, null, null, null, null],
-  keys: [0,1,2,3,4,5,6,7,8,9,10,11],
-  length: 5
+  notes: [0,1,2,3,4,5,6,7,8,9,10,11],
+  phraseLength: 5
 };
 // start at level1 by default
 let currentLevel = level1;
 // time to keep track of notes played
 let time = 0;
+let playerNotes = [];
+let pcNotes = [];
 
-function genRand(array) {
-  return Math.floor(Math.random() * array.length);
+function genRand(length) {
+  // copy currentLevel.notes to availNotes
+  const availNotes = [];
+  availNotes.push(...currentLevel.notes);
+  const output = [];
+  for (var i = 0; i < length; i++) {
+    const randIndex = Math.floor(Math.random() * availNotes.length);
+    // const randNote = availNotes[randIndex];
+    const num = availNotes.splice(randIndex, 1)[0];
+    output.push(num);
+  }
+  // for (var i = 0; i < array.length; i++) {
+  //   const num = Math.floor(Math.random() * array.length);
+  //   output.push(num);
+  //   if (i > 0 && num === output[i-1]) {
+  //     console.log('same');
+  //     output.pop();
+  //     i--;
+  //   }
+  // }
+  return output;
 }
 
 $( () => {
   const $start = $('.start');
   const $keys = $('.keys');
+
+  // set up audio tags and src
+  const container = document.querySelector('.container');
+  for (let i = 0; i < 12; i++) {
+    const audios = document.createElement('audio');
+    audios.id = 'audio'+i;
+    audios.src = 'sounds/audio'+i+'.ogg';
+    container.appendChild(audios);
+  }
+
   const $audio = $('audio');
-  // const audio = document.getElementById('piano');
   let canPlay = false;
 
   function checkMatch() {
-    if (currentLevel.playerNotes[0] === currentLevel.pcNotes[0] && currentLevel.playerNotes[1] === currentLevel.pcNotes[1] && currentLevel.playerNotes[2] === currentLevel.pcNotes[2]) {
-      console.log('correct! yuo are smart');
+    console.log('pcNotes: '+pcNotes);
+    console.log('playerNotes: '+playerNotes);
+    for (let i = 0; i < pcNotes.length; i++) {
+      if (pcNotes[i] !== playerNotes[i]) {
+        return false;
+      }
     }
-    // reset the arrays
-    for (var i = 0; i < currentLevel.pcNotes.length; i++) {
-      currentLevel.pcNotes[i] = null;
-      currentLevel.playerNotes[i] = null;
-      console.log(currentLevel.pcNotes);
-    }
+    // reset the array
+    playerNotes = [];
+    return true;
+    // if (playerNotes[0] === pcNotes[0] && playerNotes[1] === pcNotes[1] && playerNotes[2] === pcNotes[2]) {
+    //   console.log('correct! yuo are smart');
+    // }
+    // console.log(pcNotes);
   }
+
+  // // set up audio for each key
+  // $audio.each( function(i) {
+  //   $audio[i].src = 'sounds/' + $audio[i].id + '.ogg';
+  // });
 
 
   // piano playback
-  $keys.on('click', function(e) {
+  $keys.on('mousedown', function(e) {
+    // e.target
     // console.log(e.target.id);
-    $audio[e.target.id].src = 'sounds/' + e.target.id +'.ogg';
+    // $audio[e.target.id].src = 'sounds/audio' + e.target.id +'.ogg';
     $audio[e.target.id].play();
 
     if (canPlay) {
-      currentLevel.playerNotes[time] = parseInt(e.target.id);
+      playerNotes.push(parseInt(e.target.id));
       time++;
-      console.log(currentLevel.playerNotes);
-      if (time===3) {
-        console.log('finish');
-        // check if match
-        checkMatch();
+      if (time===pcNotes.length) {
+        console.log(playerNotes);
+        console.log('finish playing');
         time = 0;
+        // check if match
+        if (checkMatch()) {
+          console.log('correct');
+        }
       }
     }
   });
 
-  // need button to start playback of notes
+  // button to start playback of notes
+  // need way to make sure same note is not chosen twice
   $start.on('click', function() {
-    currentLevel.pcNotes[0] = currentLevel.keys[genRand(currentLevel.keys)];
-    currentLevel.pcNotes[1] = currentLevel.keys[genRand(currentLevel.keys)];
-    currentLevel.pcNotes[2] = currentLevel.keys[genRand(currentLevel.keys)];
-    console.log(currentLevel.pcNotes);
+    pcNotes = [];
+    pcNotes = genRand(currentLevel.phraseLength);
     const timer = setInterval( () => {
-      // console.log(timeRemaining);
-      audio.src = 'sounds/' + currentLevel.pcNotes[time] + '.ogg';
-      audio.play();
+      const thisNote = pcNotes[time];
+      // console.log(time);
+      $audio[thisNote].play();
       time++;
-      if (time > 2) {
+      if (time === pcNotes.length) {
+        console.log('pcNotes: '+pcNotes);
         clearInterval(timer);
         time = 0;
         canPlay = true;

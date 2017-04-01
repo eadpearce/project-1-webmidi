@@ -74,7 +74,6 @@ ul.black-label {
 }
 .white {
   background: white;
-  /*z-index: 0;*/
 }
 .white:hover {
   background: #ddd;
@@ -82,10 +81,15 @@ ul.black-label {
 .black:hover {
   background: #555;
 }
+.white.depress {
+  background: #aaa;
+}
+.black.depress {
+  background: #333;
+}
 .black {
   background: black;
   width: 30px;
   margin-right: 10px;
   height: 110px;
-  /*z-index: 2;*/
 }
