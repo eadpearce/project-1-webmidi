@@ -1,21 +1,66 @@
 // piano samples edited from those provided here http://theremin.music.uiowa.edu/MISpiano.html
-const pcNotes = {
-  0: null,
-  1: null,
-  2: null
-};
-const playerNotes = {
-  0: null,
-  1: null,
-  2: null
-};
-const allKeys = [0,1,2,3,4,5,6,7,8,9,10,11];
+
+// const allKeys = [0,1,2,3,4,5,6,7,8,9,10,11];
 // const blackKeys = [1,3,6,8,10];
-const whiteKeys = [0,2,4,5,7,9,11];
+// const whiteKeys = [0,2,4,5,7,9,11];
+
+// level1 uses only 3 of the white keys and a phrase length of 3
+// level is 3 turns long
+const level1 = {
+  pcNotes: [null, null, null],
+  playerNotes: [null, null, null],
+  keys: [0,2,4],
+  length: 3
+};
+// level2 uses 5 whites keys
+const level2 = {
+  pcNotes: [null, null, null],
+  playerNotes: [null, null, null],
+  keys: [0,2,4,5,7],
+  length: 5
+};
+// level3 uses all the white keys
+const level3 = {
+  pcNotes: [null, null, null],
+  playerNotes: [null, null, null],
+  keys: [0,2,4,5,7,9,11],
+  length: 5
+};
+// uses all white keys and phrase length of 4
+const level4 = {
+  pcNotes: [null, null, null, null],
+  playerNotes: [null, null, null, null],
+  keys: [0,2,4,5,7,9,11],
+  length: 5
+};
+// uses black and white keys up to E, phrase length of 4
+const level5 = {
+  pcNotes: [null, null, null, null],
+  playerNotes: [null, null, null, null],
+  keys: [0,1,2,3,4],
+  length: 3
+};
+// uses all keys
+const level6 = {
+  pcNotes: [null, null, null, null],
+  playerNotes: [null, null, null, null],
+  keys: [0,1,2,3,4,5,6,7,8,9,10,11],
+  length: 5
+};
+// uses all keys, phrase length of 5
+const level7 = {
+  pcNotes: [null, null, null, null, null],
+  playerNotes: [null, null, null, null, null],
+  keys: [0,1,2,3,4,5,6,7,8,9,10,11],
+  length: 5
+};
+// start at level1 by default
+let currentLevel = level1;
+// time to keep track of notes played
 let time = 0;
+
 function genRand(array) {
-  const randIndex = Math.floor(Math.random() * array.length);
-  return randIndex;
+  return Math.floor(Math.random() * array.length);
 }
 
 $( () => {
@@ -25,14 +70,14 @@ $( () => {
   let canPlay = false;
 
   function checkMatch() {
-    if (playerNotes[0] === pcNotes[0] && playerNotes[1] === pcNotes[1] && playerNotes[2] === pcNotes[2]) {
+    if (currentLevel.playerNotes[0] === currentLevel.pcNotes[0] && currentLevel.playerNotes[1] === currentLevel.pcNotes[1] && currentLevel.playerNotes[2] === currentLevel.pcNotes[2]) {
       console.log('correct! yuo are smart');
     }
     // reset the arrays
-    for (var i = 0; i < pcNotes.length; i++) {
-      pcNotes[i] = null;
-      playerNotes[i] = null;
-      console.log(pcNotes);
+    for (var i = 0; i < currentLevel.pcNotes.length; i++) {
+      currentLevel.pcNotes[i] = null;
+      currentLevel.playerNotes[i] = null;
+      console.log(currentLevel.pcNotes);
     }
   }
 
@@ -44,9 +89,9 @@ $( () => {
     audio.play();
 
     if (canPlay) {
-      playerNotes[time] = parseInt(e.target.id);
+      currentLevel.playerNotes[time] = parseInt(e.target.id);
       time++;
-      console.log(playerNotes);
+      console.log(currentLevel.playerNotes);
       if (time===3) {
         console.log('finish');
         // check if match
@@ -58,13 +103,13 @@ $( () => {
 
   // need button to start playback of notes
   $start.on('click', function() {
-    pcNotes[0] = whiteKeys[genRand(whiteKeys)];
-    pcNotes[1] = whiteKeys[genRand(whiteKeys)];
-    pcNotes[2] = whiteKeys[genRand(whiteKeys)];
-    console.log(pcNotes);
+    currentLevel.pcNotes[0] = currentLevel.keys[genRand(currentLevel.keys)];
+    currentLevel.pcNotes[1] = currentLevel.keys[genRand(currentLevel.keys)];
+    currentLevel.pcNotes[2] = currentLevel.keys[genRand(currentLevel.keys)];
+    console.log(currentLevel.pcNotes);
     const timer = setInterval( () => {
       // console.log(timeRemaining);
-      audio.src = 'sounds/' + pcNotes[time] + '.ogg';
+      audio.src = 'sounds/' + currentLevel.pcNotes[time] + '.ogg';
       audio.play();
       time++;
       if (time > 2) {

@@ -8,7 +8,7 @@ body {
   font-size: 16px;
 }
 .keyboard {
-  width: 306px;
+  width: 308px;
   height: 300px;
   float: left;
 }
@@ -86,6 +86,6 @@ ul.black-label {
   background: black;
   width: 30px;
   margin-right: 10px;
-  height: 100px;
+  height: 110px;
   /*z-index: 2;*/
 }
