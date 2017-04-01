@@ -3,7 +3,7 @@
 // const allnotes = [0,1,2,3,4,5,6,7,8,9,10,11];
 // const blacknotes = [1,3,6,8,10];
 // const whitenotes = [0,2,4,5,7,9,11];
-
+const keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
 // level1 uses only 3 of the white notes and a phrase length of 3
 // level is 3 turns long
 const level1 = {
@@ -47,6 +47,7 @@ let time = 0;
 let playerNotes = [];
 let pcNotes = [];
 
+
 function genRand(length) {
   // copy currentLevel.notes to availNotes
   const availNotes = [];
@@ -58,15 +59,6 @@ function genRand(length) {
     const num = availNotes.splice(randIndex, 1)[0];
     output.push(num);
   }
-  // for (var i = 0; i < array.length; i++) {
-  //   const num = Math.floor(Math.random() * array.length);
-  //   output.push(num);
-  //   if (i > 0 && num === output[i-1]) {
-  //     console.log('same');
-  //     output.pop();
-  //     i--;
-  //   }
-  // }
   return output;
 }
 
@@ -98,27 +90,48 @@ $( () => {
     // reset the array
     playerNotes = [];
     return true;
-    // if (playerNotes[0] === pcNotes[0] && playerNotes[1] === pcNotes[1] && playerNotes[2] === pcNotes[2]) {
-    //   console.log('correct! yuo are smart');
-    // }
-    // console.log(pcNotes);
   }
 
-  // // set up audio for each key
-  // $audio.each( function(i) {
-  //   $audio[i].src = 'sounds/' + $audio[i].id + '.ogg';
-  // });
-
-
-  // piano playback
-  $keys.on('mousedown', function(e) {
-    // e.target
-    // console.log(e.target.id);
-    // $audio[e.target.id].src = 'sounds/audio' + e.target.id +'.ogg';
-    $audio[e.target.id].play();
+  $(document).keydown( function(e) {
+    if ($.inArray( e.keyCode, keyboardControl)===-1) {
+      return;
+    }
+    const keyboardNote = keyboardControl.indexOf(e.keyCode);
+    $('#key'+keyboardNote).addClass('depress');
+    setTimeout( () => {
+      $('#key'+keyboardNote).removeClass('depress');
+    }, 500);
+    $audio[keyboardNote].currentTime=0;
+    $audio[keyboardNote].play();
 
     if (canPlay) {
-      playerNotes.push(parseInt(e.target.id));
+      playerNotes.push(parseInt(keyboardNote));
+      time++;
+      if (time===pcNotes.length) {
+        console.log(playerNotes);
+        console.log('finish playing');
+        time = 0;
+        // check if match
+        if (checkMatch()) {
+          console.log('correct');
+        }
+      }
+    }
+  });
+  // piano playback
+  $keys.on('mousedown', function(e) {
+    const thisKey = e.target.id;
+    const keyId = thisKey.slice(3);
+    // console.log(keyId);
+    $audio[keyId].currentTime=0;
+    $audio[keyId].play();
+    $('#key'+keyId).addClass('depress');
+    setTimeout( () => {
+      $('#key'+keyId).removeClass('depress');
+    }, 500);
+
+    if (canPlay) {
+      playerNotes.push(parseInt(keyId));
       time++;
       if (time===pcNotes.length) {
         console.log(playerNotes);
@@ -141,6 +154,12 @@ $( () => {
     const timer = setInterval( () => {
       const thisNote = pcNotes[time];
       // console.log(time);
+      // console.log($('#key'+thisNote));
+      $('#key'+thisNote).addClass('depress');
+      setTimeout( () => {
+        $('#key'+thisNote).removeClass('depress');
+      }, 500);
+      $audio[thisNote].currentTime=0;
       $audio[thisNote].play();
       time++;
       if (time === pcNotes.length) {
