@@ -135,6 +135,7 @@ $( () => {
   // button to start playback of notes
   // need way to make sure same note is not chosen twice
   $start.on('click', function() {
+    playerNotes = [];
     pcNotes = [];
     pcNotes = genRand(currentLevel.phraseLength);
     const timer = setInterval( () => {
