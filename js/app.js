@@ -91,6 +91,7 @@ $( () => {
     console.log('playerNotes: '+playerNotes);
     for (let i = 0; i < pcNotes.length; i++) {
       if (pcNotes[i] !== playerNotes[i]) {
+        playerNotes = [];
         return false;
       }
     }
