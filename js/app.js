@@ -66,7 +66,8 @@ function genRand(array) {
 $( () => {
   const $start = $('.start');
   const $keys = $('.keys');
-  const audio = document.getElementById('piano');
+  const $audio = $('audio');
+  // const audio = document.getElementById('piano');
   let canPlay = false;
 
   function checkMatch() {
@@ -85,8 +86,8 @@ $( () => {
   // piano playback
   $keys.on('click', function(e) {
     // console.log(e.target.id);
-    audio.src = 'sounds/' + e.target.id +'.ogg';
-    audio.play();
+    $audio[e.target.id].src = 'sounds/' + e.target.id +'.ogg';
+    $audio[e.target.id].play();
 
     if (canPlay) {
       currentLevel.playerNotes[time] = parseInt(e.target.id);
