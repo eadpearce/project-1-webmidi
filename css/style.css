@@ -4,7 +4,6 @@
 body {
   background: lightgrey;
   font-family: 'Cardo', serif;
-  font-weight: bold;
   font-size: 16px;
 }
 .keyboard {
@@ -15,31 +14,58 @@ body {
 .instructions {
   padding-top: 20px;
   line-height: 1.3em;
+  clear: both;
 }
-.container {
-  background-color: white;
-  padding: 20px;
-  width: 470px;
-  margin: 200px auto;
-  border-radius: 5px;
-  border: 1px solid black;
-}
-.controls {
-  text-align: center;
-  height: 260px;
-}
-.start {
+.options {
+  width: 130px;
+  margin: 10px 0;
   font-family: 'Cardo', serif;
   font-weight:bold;
   line-height: 1.5em;
-  width: 100px;
   background-color: white;
   border: 2px solid black;
   border-radius: 3px;
   float: right;
   font-size: 18px;
 }
-.start:hover {
+label {
+  font-weight: bold;
+}
+.pre {
+  font-size: 25px;
+}
+.winmsg {
+  margin: 20px 0;
+  padding: 0 10px;
+  font-weight: bold;
+  font-size: 20px;
+}
+.winmsg:after {
+  content: '\00a0';
+}
+main {
+  width: 500px;
+  margin: 100px auto;
+}
+h1 {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 1.3em;
+}
+.container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+.controls {
+  height: 260px;
+  width: 130px;
+  float: right;
+}
+.play:hover {
   background: #ddd;
 }
 .black-keys {
@@ -97,6 +123,6 @@ ul.black-label {
   transition: 0.2s ease;
 }
 .black.depress {
-  background: #333;
+  background: #555;
   transition: 0.2s ease;
 }
