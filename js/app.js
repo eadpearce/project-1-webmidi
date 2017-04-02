@@ -3,6 +3,8 @@
 // const allnotes = [0,1,2,3,4,5,6,7,8,9,10,11];
 // const blacknotes = [1,3,6,8,10];
 // const whitenotes = [0,2,4,5,7,9,11];
+
+// index corresponds to note ID
 const keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
 const levels = {
   1: { notes: [0,2,4], phraseLength: 3 },
@@ -11,7 +13,7 @@ const levels = {
   4: { notes: [0,2,4,5,7,9,11], phraseLength: 5 },
   5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5 },
   6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5 },
-  7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5 }
+  7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7 }
 };
 
 // start at level1 by default
@@ -21,6 +23,7 @@ let time = 0;
 let playerNotes = [];
 let pcNotes = [];
 let currentDifficulty = 'easy';
+let canPlay = false;
 
 
 function genRand(length) {
@@ -42,7 +45,7 @@ $( () => {
   const $keys = $('.keys');
   const $winmsg = $('.winmsg');
 
-  // set up audio tags and src
+  // set up audio tags and src FIRST
   const container = document.querySelector('.container');
   for (let i = 0; i < 12; i++) {
     const audios = document.createElement('audio');
@@ -50,9 +53,10 @@ $( () => {
     audios.src = 'sounds/audio'+i+'.ogg';
     container.appendChild(audios);
   }
+  // THEN assign them to variable
   const $audio = $('audio');
-  let canPlay = false;
 
+  // check if correct
   function checkMatch() {
     console.log('pcNotes: '+pcNotes);
     console.log('playerNotes: '+playerNotes);
@@ -75,10 +79,12 @@ $( () => {
     return true;
   }
 
+  // level selector
   $('select').on('change', function() {
     currentLevel = levels[parseInt(this.value.slice(5))];
   });
 
+  // difficulty selector
   $('.difficulty').on('change', function(e) {
     if (e.target.value === 'easy') {
       currentDifficulty = 'easy';
@@ -87,6 +93,7 @@ $( () => {
     }
   });
 
+  // keyboard playback
   $(document).keydown( function(e) {
     if ($.inArray( e.keyCode, keyboardControl)===-1) {
       return;
@@ -114,7 +121,8 @@ $( () => {
       }
     }
   });
-  // piano playback
+
+  // piano mouse playback
   $keys.on('mousedown', function(e) {
     const thisKey = e.target.id;
     const keyId = thisKey.slice(3);
@@ -142,7 +150,7 @@ $( () => {
     }
   });
 
-  // button to start playback of notes
+  // PC phrase playback
   $play.on('click', function() {
     playerNotes = [];
     pcNotes = [];

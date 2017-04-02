@@ -118,6 +118,7 @@ ul.black-label {
 .black:hover {
   background: #555;
 }
+/* ignore the linter. don't separate these or it won't work */
 .white.depress {
   background: #aaa;
   transition: 0.2s ease;
