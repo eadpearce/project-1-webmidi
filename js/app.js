@@ -40,6 +40,7 @@ let pcNotes = [];
 let currentDifficulty = 1;
 let canPlay = false;
 let canRetry = false;
+let useNotation = true;
 let score = 0;
 let currentTempo = 'slow';
 const tempi = {
@@ -83,17 +84,14 @@ $( () => {
   $score.html('Score: '+score);
   $retry.addClass('disabled');
 
-
   // level selector
   $('.level-select').on('change', function() {
     currentLevel = levels[parseInt(this.value.slice(5))];
   });
-
   // tempo selector
   $('.tempo-select').on('change', function() {
     currentTempo = this.value;
   });
-
   // difficulty selector
   $('.difficulty').on('change', function(e) {
     if (e.target.value === 'easy') {
@@ -102,7 +100,14 @@ $( () => {
       currentDifficulty = 2;
     }
   });
-
+  // notation on/off (doesn't affect score)
+  $('.notation').on('change', function(e) {
+    if (e.target.value === 'on') {
+      useNotation = true;
+    } else if (e.target.value === 'off') {
+      useNotation = false;
+    }
+  });
   // check if correct
   function checkMatch() {
     // console.log('pcNotes: '+pcNotes);
@@ -126,9 +131,6 @@ $( () => {
     $retry.addClass('disabled');
     $score.html('Score: '+score);
     $winmsg.html('Correct!');
-    setTimeout( () => {
-      $winmsg.html('');
-    }, 1500);
     return true;
   }
 
@@ -138,7 +140,6 @@ $( () => {
       $('#key'+note).removeClass('depress');
     }, 250);
   }
-
   // note flashes red if it's wrong, white if it's correct
   function feedback(note, pos) {
     if (note===pcNotes[pos]) {
@@ -180,10 +181,9 @@ $( () => {
       }
       $audio[thisNote].currentTime=0;
       $audio[thisNote].play();
-      if (currentDifficulty===1) {
+      if (useNotation) {
         updateManuscript(thisNote);
       }
-      // $notes.html(manuscript[thisNote]);
       time++;
       if (time === pcNotes.length) {
         clearInterval(timer);

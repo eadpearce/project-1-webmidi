@@ -8,7 +8,7 @@ body {
 }
 main {
   width: 530px;
-  margin: 50px auto;
+  margin: 0 auto;
 }
 .title {
   height: 120px;
@@ -38,7 +38,7 @@ main {
 }
 .options {
   width: 160px;
-  margin: 5px 0;
+  margin: 0 0 10px;
   font-family: 'Cardo', serif;
   font-weight:bold;
   line-height: 1.5em;
@@ -50,12 +50,17 @@ main {
 }
 label {
   font-weight: bold;
+  line-height: 1.3em;
+}
+form {
+  height: 270px;
 }
 .notif {
   margin: 20px 0;
   padding: 0 10px;
   font-weight: bold;
   font-size: 20px;
+  clear: both;
 }
 .notif:after {
   content: '\00a0';
@@ -73,6 +78,14 @@ h1 {
 .controls {
   height: 260px;
   width: 160px;
+  float: right;
+}
+.diff {
+  width: 80px;
+  float: left;
+}
+.not {
+  width: 80px;
   float: right;
 }
 .options:hover {
@@ -172,7 +185,7 @@ ul.black-label {
 .clef {
   position: absolute;
   font-size: 100px;
-  top: 156px;
+  top: 106px;
 }
 .clef:before {
   content: '\1d11e'

@@ -16,21 +16,6 @@
     <div class="title"><h1><span class="pre">Learn to play piano by ear, or: </span><br>Musical Simon Says</h1></div>
     <div class="manuscript">
       <ul class="notes">
-        <!-- <li class="flat b-flat"></li>
-        <li class="note b"></li>
-        <li class="flat a-flat"></li>
-        <li class="note a"></li>
-        <li class="flat g-flat"></li>
-        <li class="note g"></li>
-        <li class="note f"></li>
-        <li class="flat e-flat"></li>
-        <li class="note e"></li>
-        <li class="flat d-flat"></li>
-        <li class="note d"></li>
-        <li class="note c"></li>
-        <li class="ledger"></li>
-        <li class="note d"></li>
-        <li class="note c"></li> -->
       </ul>
       <div class="clef"></div>
       <div class="lines line1">
@@ -103,9 +88,16 @@
               <option value="fast">Fast</option>
               <option value="vfast">Ridiculous</option>
             </select>
-            <label for="difficulty">Difficulty:</label><br>
-            <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
-            <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
+            <div class="diff">
+              <label for="difficulty">Difficulty:</label><br>
+              <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
+              <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
+            </div>
+            <div class="not">
+              <label for="notation">Notation:</label><br>
+              <input class="notation" type="radio" name="notation" value="on" checked>On<br>
+              <input class="notation" type="radio" name="notation" value="off">Off<br>
+            </div>
           </form>
           <p class="notif winmsg"></p>
           <p class="notif pcmsg"></p>
