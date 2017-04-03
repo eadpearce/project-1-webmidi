@@ -25,20 +25,11 @@ const mode = {
     2: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11] }, score: 2},
     3: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10] }, score: 3},
     4: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9] }, score: 4},
-    5: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3] }, score: 5},
-    6: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [11,3,6], 13: [2,6,11] }, score: 6},
+    5: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [3,8,11] }, score: 5},
+    6: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [3,6,11], 13: [2,6,11] }, score: 6},
     7: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [11,3,6], 13: [2,6,11], 14: [0,3,6,8], 15: [2,5,8] }, score: 7}
   }
 };
-// const levels = {
-//   1: { notes: [0,2,4], phraseLength: 3, score: 1},
-//   2: { notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
-//   3: { notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
-//   4: { notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
-//   5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
-//   6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
-//   7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
-// };
 const manuscript = {
   0: 'c',
   1: 'd',
@@ -53,21 +44,20 @@ const manuscript = {
   10: 'b',
   11: 'b'
 };
-
 // start at level1 by default
-let currentLevel = mode.seq[1];
+let currentLevel = 1;
+let currentMode = 'seq';
+let currentTempo = 'slow';
+// score weighting for difficulty - 1 is easy 2 is hard
+let currentDifficulty = 1;
 // time to keep track of notes played
 let time = 0;
 let playerNotes = [];
 let pcNotes = [];
-// score weighting for difficulty - 1 is easy 2 is hard
-let currentDifficulty = 1;
 let canPlay = false;
 let canRetry = false;
 let useNotation = true;
 let score = 0;
-let currentTempo = 'slow';
-let currentMode = 'slow';
 const tempi = {
   slow: { tempo: 1000, score: 1 },
   med: { tempo: 500, score: 1 },
@@ -79,7 +69,7 @@ const tempi = {
 function genRand(length) {
   // copy currentLevel.notes to availNotes
   const availNotes = [];
-  availNotes.push(...currentLevel.notes);
+  availNotes.push(...mode[currentMode][currentLevel].notes);
   const output = [];
   for (var i = 0; i < length; i++) {
     const randIndex = Math.floor(Math.random() * availNotes.length);
@@ -92,7 +82,8 @@ function genRand(length) {
 function genRandChord(size) {
   // copy currentLevel.notes to availNotes
   const randKey = Math.floor(Math.random() * size);
-  return currentLevel.notes[randKey];
+  console.log(mode.chord[currentLevel].notes[randKey]);
+  return mode.chord[currentLevel].notes[randKey];
 }
 
 $( () => {
@@ -117,17 +108,17 @@ $( () => {
   $score.html('Score: '+score);
   $retry.addClass('disabled');
 
-  // level selector
-  $('.level-select').on('change', function() {
-    currentLevel = levels[parseInt(this.value.slice(5))];
-  });
+  // // level selector
+  // $('.level-select').on('change', function() {
+  //   currentLevel = mode[currentMode][currentLevel][parseInt(this.value.slice(5))];
+  // });
   // tempo selector
-  $('.tempo-select').on('change', function() {
-    currentTempo = this.value;
+  $('.tempo-select').on('change', function(e) {
+    currentTempo = e.target.value;
   });
   // mode selector
-  $('.mode-select').on('change', function() {
-    currentMode = this.value;
+  $('.mode-select').on('change', function(e) {
+    currentMode = e.target.value;
   });
   // difficulty selector
   $('.difficulty').on('change', function(e) {
@@ -147,41 +138,39 @@ $( () => {
   });
   // check if correct
   function checkMatch() {
-    // console.log('pcNotes: '+pcNotes);
-    // console.log('playerNotes: '+playerNotes);
     if (currentMode === 'chord') {
-      if ($.inArray( playerNotes[i], pcNotes)===-1) {
-        return false;
-      } else {
-        const pcSorted = pcNotes.sort();
-        const playerSorted = playerNotes.sort();
-        let correct = 0;
-        for (var i = 0; i < pcSorted.length; i++) {
+      for (let i = 0; i < playerNotes.length; i++) {
+        if ($.inArray( playerNotes[i], pcNotes)===-1) {
+          return false;
+        } else {
+          const pcSorted = pcNotes.sort();
+          const playerSorted = playerNotes.sort();
+          let correct = 0;
           if (pcSorted[i] === playerSorted[i]) {
             correct++;
+          } else if (correct === pcNotes.length) {
+            console.log('correct');
           }
         }
-        if (correct === pcNotes.length) {
-          console.log('correct');
+      }
+    } else if (currentMode === 'seq') {
+      for (let i = 0; i < pcNotes.length; i++) {
+        if (pcNotes[i] !== playerNotes[i]) {
+          playerNotes = [];
+          canRetry = true;
+          canPlay = false;
+          $winmsg.html('Try again...');
+          setTimeout( () => {
+            $winmsg.html('');
+          }, 1500);
+          return false;
         }
       }
     }
-    for (let i = 0; i < pcNotes.length; i++) {
-      if (pcNotes[i] !== playerNotes[i]) {
-        playerNotes = [];
-        canRetry = true;
-        canPlay = false;
-        $winmsg.html('Try again...');
-        setTimeout( () => {
-          $winmsg.html('');
-        }, 1500);
-        return false;
-      }
-    }
-    // reset the array
+    // if correct
     playerNotes = [];
     canRetry = false;
-    score = score + (currentLevel.score * currentDifficulty * tempi[currentTempo]['score']);
+    score = score + (mode[currentMode][currentLevel].score * currentDifficulty * tempi[currentTempo].score);
     $retry.addClass('disabled');
     $score.html('Score: '+score);
     $winmsg.html('Correct!');
@@ -228,41 +217,41 @@ $( () => {
   }
 
   function pcPlayback() {
-    if (currentMode === 'seq') {
-      const timer = setInterval( () => {
-        const thisNote = pcNotes[time];
-        if (currentDifficulty === 1) {
-          keyDepress(thisNote);
-        }
-        $audio[thisNote].currentTime=0;
-        $audio[thisNote].play();
-        if (useNotation) {
-          updateManuscript(thisNote);
-        }
-        time++;
-        if (time === pcNotes.length) {
-          clearInterval(timer);
-          time = 0;
-          canPlay = true;
-          canRetry = true;
-          $retry.removeClass('disabled');
-          $('.pcmsg').html('Your turn');
-        }
-      }, tempi[currentTempo]['tempo']);
-    } else if (currentMode === 'chord') {
-      for (let i = 0; i < pcNotes.length; i++) {
-        const thisNote = pcNotes[i];
-        if (currentDifficulty === 1) {
-          keyDepress(thisNote);
-        }
-        $audio[thisNote].currentTime = 0;
-        $audio[thisNote].play();
+    const timer = setInterval( () => {
+      const thisNote = pcNotes[time];
+      if (currentDifficulty === 1) {
+        keyDepress(thisNote);
       }
-      canPlay = true;
-      canRetry = true;
-      $retry.removeClass('disabled');
-      $('.pcmsg').html('Your turn');
+      $audio[thisNote].currentTime=0;
+      $audio[thisNote].play();
+      if (useNotation) {
+        updateManuscript(thisNote);
+      }
+      time++;
+      if (time === pcNotes.length) {
+        clearInterval(timer);
+        time = 0;
+        canPlay = true;
+        canRetry = true;
+        $retry.removeClass('disabled');
+        $('.pcmsg').html('Your turn');
+      }
+    }, tempi[currentTempo]['tempo']);
+  }
+
+  function pcChordPlayback() {
+    for (let i = 0; i < pcNotes.length; i++) {
+      const thisNote = pcNotes[i];
+      if (currentDifficulty === 1) {
+        keyDepress(thisNote);
+      }
+      $audio[thisNote].currentTime = 0;
+      $audio[thisNote].play();
     }
+    canPlay = true;
+    canRetry = true;
+    $retry.removeClass('disabled');
+    $('.pcmsg').html('Your turn');
 
   }
 
@@ -310,11 +299,12 @@ $( () => {
     playerNotes = [];
     pcNotes = [];
     if (currentMode === 'chord') {
-      const randChord = Object.keys(mode.chord.currentLevel['notes']).length;
+      const randChord = Object.keys(mode.chord[currentLevel].notes).length;
       pcNotes = genRandChord(randChord);
+      pcChordPlayback();
       return;
     }
-    pcNotes = genRand(currentLevel.phraseLength);
+    pcNotes = genRand(mode[currentMode][currentLevel].phraseLength);
     pcPlayback();
   });
 
