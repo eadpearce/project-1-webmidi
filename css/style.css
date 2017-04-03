@@ -10,6 +10,9 @@ main {
   width: 530px;
   margin: 50px auto;
 }
+.title {
+  height: 120px;
+}
 .container {
   background-color: #eee;
   height: 450px;
@@ -141,16 +144,103 @@ ul.black-label {
 }
 /* ignore the linter. don't separate these or it won't work */
 .white.depress {
-  background: #aaa;
-  transition: 0.2s ease;
+  background: #83bbdf;
+  transition: 0.1s ease;
 }
 .black.depress {
-  background: #555;
-  transition: 0.2s ease;
+  background: #83bbdf;
+  transition: 0.1s ease;
 }
 .wrong {
   border-color: red;
 }
 .correct {
   border-color: white;
+}
+.manuscript {
+  height: 100px;
+  width: 100%;
+}
+.lines {
+  height: 10px;
+  border-bottom: 2px solid black;
+  width: 100%;
+}
+.line1 {
+  padding-top: 16px;
+}
+.clef {
+  position: absolute;
+  font-size: 100px;
+  top: 156px;
+}
+.clef:before {
+  content: '\1d11e'
+}
+.lines:after {
+  content: '\00a0'
+}
+.notes {
+  margin-left: 30px;
+  position: absolute;
+}
+.notes li {
+  font-size: 48px;
+  display: block;
+  margin-right: 5px;
+  float: left;
+  letter-spacing: -15px;
+}
+.note {
+  margin-right: 5px;
+}
+.note:after {
+  content: '\2669'
+}
+.b {
+  padding-top: 1px;
+}
+.flat:before {
+  content: '\266d';
+  font-size: 28px;
+}
+.b-flat {
+  padding-top: 5px;
+}
+.a {
+  padding-top: 6px;
+}
+.a-flat {
+  padding-top: 10px;
+}
+.g {
+  padding-top: 10px;
+}
+.g-flat {
+  padding-top: 14px;
+}
+.f {
+  padding-top: 15px;
+}
+.e {
+  padding-top: 21px;
+}
+.e-flat {
+  padding-top: 25px;
+}
+.d {
+  padding-top: 26px;
+}
+.d-flat {
+  padding-top: 30px;
+}
+.c {
+  padding-top: 30px;
+}
+.ledger {
+  margin-left: -29px;
+  padding-top: 21px;
+}
+.ledger:after {
+  content: '_'
 }

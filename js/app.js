@@ -15,6 +15,20 @@ const levels = {
   6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
   7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
 };
+const manuscript = {
+  0: '<li class="note c"></li><li class="ledger"></li>',
+  1: '<li class="flat d-flat"></li><li class="note d"></li>',
+  2: '<li class="note d"></li>',
+  3: '<li class="flat e-flat"></li><li class="note e"></li>',
+  4: '<li class="note e"></li>',
+  5: '<li class="note f"></li>',
+  6: '<li class="flat g-flat"></li><li class="note g"></li>',
+  7: '<li class="note g"></li>',
+  8: '<li class="flat a-flat"></li><li class="note a"></li>',
+  9: '<li class="note a"></li>',
+  10: '<li class="flat b-flat"></li><li class="note b"></li>',
+  11: '<li class="note b"></li>'
+};
 
 // start at level1 by default
 let currentLevel = levels[1];
@@ -27,12 +41,12 @@ let currentDifficulty = 1;
 let canPlay = false;
 let canRetry = false;
 let score = 0;
-let currentTempo = 1000;
+let currentTempo = 'slow';
 const tempi = {
-  'slow': 1000,
-  'med': 500,
-  'fast': 250,
-  'vfast': 125
+  slow: { tempo: 1000, score: 1 },
+  med: { tempo: 500, score: 1 },
+  fast: { tempo: 250, score: 1 },
+  vfast: { tempo: 125, score: 1 }
 };
 
 // generate a random phrase
@@ -65,6 +79,7 @@ $( () => {
   const $keys = $('.keys');
   const $winmsg = $('.winmsg');
   const $score = $('.score');
+  const $notes = $('.notes');
   $score.html('Score: '+score);
   $retry.addClass('disabled');
 
@@ -72,14 +87,11 @@ $( () => {
   // level selector
   $('.level-select').on('change', function() {
     currentLevel = levels[parseInt(this.value.slice(5))];
-    console.log(this.value);
   });
 
   // tempo selector
   $('.tempo-select').on('change', function() {
-    currentTempo = tempi[this.value];
-    console.log(tempi[this.value]);
-    console.log(this.value);
+    currentTempo = this.value;
   });
 
   // difficulty selector
@@ -110,7 +122,7 @@ $( () => {
     // reset the array
     playerNotes = [];
     canRetry = false;
-    score = score + (currentLevel.score * currentDifficulty);
+    score = score + (currentLevel.score * currentDifficulty * tempi[currentTempo]['score']);
     $retry.addClass('disabled');
     $score.html('Score: '+score);
     $winmsg.html('Correct!');
@@ -124,7 +136,7 @@ $( () => {
     $('#key'+note).addClass('depress');
     setTimeout( () => {
       $('#key'+note).removeClass('depress');
-    }, 500);
+    }, 250);
   }
 
   // note flashes red if it's wrong, white if it's correct
@@ -150,6 +162,7 @@ $( () => {
       }
       $audio[thisNote].currentTime=0;
       $audio[thisNote].play();
+      $notes.html(manuscript[thisNote]);
       time++;
       if (time === pcNotes.length) {
         $('.pcmsg').html('Your turn.');
@@ -159,7 +172,7 @@ $( () => {
         canRetry = true;
         $retry.removeClass('disabled');
       }
-    }, currentTempo);
+    }, tempi[currentTempo]['tempo']);
   }
 
   function playerPlayback(note) {
@@ -220,25 +233,7 @@ $( () => {
     $score.html('Score: '+score);
     $('.pcmsg').html('Playing...');
 
-    const timer = setInterval( () => {
-      const thisNote = pcNotes[time];
-
-      if (currentDifficulty === 1) {
-        keyDepress(thisNote);
-      }
-
-      $audio[thisNote].currentTime=0;
-      $audio[thisNote].play();
-      time++;
-
-      if (time === pcNotes.length) {
-        // console.log('pcNotes: '+pcNotes);
-        $('.pcmsg').html('Your turn.');
-        clearInterval(timer);
-        time = 0;
-        canPlay = true;
-      }
-    }, currentTempo);
+    pcPlayback();
   });
 
 
