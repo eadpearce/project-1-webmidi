@@ -165,6 +165,11 @@ $( () => {
     note.classList.add('note');
     note.classList.add(manuscript[playedNote]);
     notes.appendChild(note);
+    if (playedNote === 0) {
+      const ledger = document.createElement('li');
+      ledger.classList.add('ledger');
+      notes.appendChild(ledger);
+    }
   }
 
   function pcPlayback() {
@@ -186,6 +191,7 @@ $( () => {
         canPlay = true;
         canRetry = true;
         $retry.removeClass('disabled');
+        $('.pcmsg').html('Your turn');
       }
     }, tempi[currentTempo]['tempo']);
   }
@@ -229,6 +235,7 @@ $( () => {
 
   // PC phrase playback
   $play.on('click', function() {
+    notes.innerHTML = '';
     $('.pcmsg').html('Playing...');
     playerNotes = [];
     pcNotes = [];
@@ -238,6 +245,7 @@ $( () => {
 
   // PC retry/repeat button
   $retry.on('click', function(e) {
+    notes.innerHTML = '';
     if (!canRetry) {
       e.preventDefault();
       return;
@@ -247,7 +255,6 @@ $( () => {
     }
     $score.html('Score: '+score);
     $('.pcmsg').html('Playing...');
-
     pcPlayback();
   });
 
