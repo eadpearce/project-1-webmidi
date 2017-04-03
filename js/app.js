@@ -4,17 +4,41 @@
 // const blacknotes = [1,3,6,8,10];
 // const whitenotes = [0,2,4,5,7,9,11];
 
+// note mapping
+// C, C#, D, Eb, E, F, F#, G, G#, A, Bb,  B
+// 0, 1,  2, 3,  4, 5, 6,  7, 8,  9, 10, 11
+
 // index corresponds to note ID
 const keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
-const levels = {
-  1: { notes: [0,2,4], phraseLength: 3, score: 1},
-  2: { notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
-  3: { notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
-  4: { notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
-  5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
-  6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
-  7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
+const mode = {
+  seq: {
+    1: { notes: [0,2,4], phraseLength: 3, score: 1},
+    2: { notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
+    3: { notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
+    4: { notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
+    5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
+    6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
+    7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
+  },
+  chord: {
+    1: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9] }, score: 1},
+    2: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11] }, score: 2},
+    3: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10] }, score: 3},
+    4: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9] }, score: 4},
+    5: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3] }, score: 5},
+    6: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [11,3,6], 13: [2,6,11] }, score: 6},
+    7: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [11,3,6], 13: [2,6,11], 14: [0,3,6,8], 15: [2,5,8] }, score: 7}
+  }
 };
+// const levels = {
+//   1: { notes: [0,2,4], phraseLength: 3, score: 1},
+//   2: { notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
+//   3: { notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
+//   4: { notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
+//   5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
+//   6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
+//   7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
+// };
 const manuscript = {
   0: 'c',
   1: 'd',
@@ -31,7 +55,7 @@ const manuscript = {
 };
 
 // start at level1 by default
-let currentLevel = levels[1];
+let currentLevel = mode.seq[1];
 // time to keep track of notes played
 let time = 0;
 let playerNotes = [];
@@ -43,6 +67,7 @@ let canRetry = false;
 let useNotation = true;
 let score = 0;
 let currentTempo = 'slow';
+let currentMode = 'slow';
 const tempi = {
   slow: { tempo: 1000, score: 1 },
   med: { tempo: 500, score: 1 },
@@ -64,6 +89,12 @@ function genRand(length) {
   return output;
 }
 
+function genRandChord(size) {
+  // copy currentLevel.notes to availNotes
+  const randKey = Math.floor(Math.random() * size);
+  return currentLevel.notes[randKey];
+}
+
 $( () => {
   // set up audio tags and src FIRST
   const container = document.querySelector('.container');
@@ -80,7 +111,9 @@ $( () => {
   const $keys = $('.keys');
   const $winmsg = $('.winmsg');
   const $score = $('.score');
+  const $level = $('.current-level');
   const notes = document.querySelector('.notes');
+  $level.html('Level 1');
   $score.html('Score: '+score);
   $retry.addClass('disabled');
 
@@ -91,6 +124,10 @@ $( () => {
   // tempo selector
   $('.tempo-select').on('change', function() {
     currentTempo = this.value;
+  });
+  // mode selector
+  $('.mode-select').on('change', function() {
+    currentMode = this.value;
   });
   // difficulty selector
   $('.difficulty').on('change', function(e) {
@@ -112,6 +149,23 @@ $( () => {
   function checkMatch() {
     // console.log('pcNotes: '+pcNotes);
     // console.log('playerNotes: '+playerNotes);
+    if (currentMode === 'chord') {
+      if ($.inArray( playerNotes[i], pcNotes)===-1) {
+        return false;
+      } else {
+        const pcSorted = pcNotes.sort();
+        const playerSorted = playerNotes.sort();
+        let correct = 0;
+        for (var i = 0; i < pcSorted.length; i++) {
+          if (pcSorted[i] === playerSorted[i]) {
+            correct++;
+          }
+        }
+        if (correct === pcNotes.length) {
+          console.log('correct');
+        }
+      }
+    }
     for (let i = 0; i < pcNotes.length; i++) {
       if (pcNotes[i] !== playerNotes[i]) {
         playerNotes = [];
@@ -174,26 +228,42 @@ $( () => {
   }
 
   function pcPlayback() {
-    const timer = setInterval( () => {
-      const thisNote = pcNotes[time];
-      if (currentDifficulty === 1) {
-        keyDepress(thisNote);
+    if (currentMode === 'seq') {
+      const timer = setInterval( () => {
+        const thisNote = pcNotes[time];
+        if (currentDifficulty === 1) {
+          keyDepress(thisNote);
+        }
+        $audio[thisNote].currentTime=0;
+        $audio[thisNote].play();
+        if (useNotation) {
+          updateManuscript(thisNote);
+        }
+        time++;
+        if (time === pcNotes.length) {
+          clearInterval(timer);
+          time = 0;
+          canPlay = true;
+          canRetry = true;
+          $retry.removeClass('disabled');
+          $('.pcmsg').html('Your turn');
+        }
+      }, tempi[currentTempo]['tempo']);
+    } else if (currentMode === 'chord') {
+      for (let i = 0; i < pcNotes.length; i++) {
+        const thisNote = pcNotes[i];
+        if (currentDifficulty === 1) {
+          keyDepress(thisNote);
+        }
+        $audio[thisNote].currentTime = 0;
+        $audio[thisNote].play();
       }
-      $audio[thisNote].currentTime=0;
-      $audio[thisNote].play();
-      if (useNotation) {
-        updateManuscript(thisNote);
-      }
-      time++;
-      if (time === pcNotes.length) {
-        clearInterval(timer);
-        time = 0;
-        canPlay = true;
-        canRetry = true;
-        $retry.removeClass('disabled');
-        $('.pcmsg').html('Your turn');
-      }
-    }, tempi[currentTempo]['tempo']);
+      canPlay = true;
+      canRetry = true;
+      $retry.removeClass('disabled');
+      $('.pcmsg').html('Your turn');
+    }
+
   }
 
   function playerPlayback(note) {
@@ -239,6 +309,11 @@ $( () => {
     $('.pcmsg').html('Playing...');
     playerNotes = [];
     pcNotes = [];
+    if (currentMode === 'chord') {
+      const randChord = Object.keys(mode.chord.currentLevel['notes']).length;
+      pcNotes = genRandChord(randChord);
+      return;
+    }
     pcNotes = genRand(currentLevel.phraseLength);
     pcPlayback();
   });

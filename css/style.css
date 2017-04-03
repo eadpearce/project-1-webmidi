@@ -56,7 +56,7 @@ form {
   height: 270px;
 }
 .notif {
-  margin: 20px 0;
+  margin: 15px 0;
   padding: 0 10px;
   font-weight: bold;
   font-size: 20px;
@@ -94,7 +94,7 @@ h1 {
 .disabled {
   background: darkgrey;
   color: grey;
-  border-color: darkgrey;
+  border-color: grey;
 }
 .disabled:hover {
   background: darkgrey;

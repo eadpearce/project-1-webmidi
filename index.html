@@ -72,39 +72,45 @@
           <button class="options play">Play</button>
           <button class="options retry">Retry (-1 point)</button>
           <form>
-            <label class="level">Select level:</label><br>
+            <!-- <label class="level">Select level:</label><br>
             <select name="level" class="options level-select">
-              <option value="level1" selected>Level 1</option>
-              <option value="level2">Level 2</option>
-              <option value="level3">Level 3</option>
-              <option value="level4">Level 4</option>
-              <option value="level5">Level 5</option>
-              <option value="level6">Level 6</option>
-            </select>
-            <label class="tempo">Select tempo:</label><br>
-            <select name="level" class="options tempo-select">
-              <option value="slow" selected>Slow</option>
-              <option value="med">Medium</option>
-              <option value="fast">Fast</option>
-              <option value="vfast">Ridiculous</option>
-            </select>
-            <div class="diff">
-              <label for="difficulty">Difficulty:</label><br>
-              <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
-              <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
-            </div>
-            <div class="not">
-              <label for="notation">Notation:</label><br>
-              <input class="notation" type="radio" name="notation" value="on" checked>On<br>
-              <input class="notation" type="radio" name="notation" value="off">Off<br>
-            </div>
-          </form>
-          <p class="notif winmsg"></p>
-          <p class="notif pcmsg"></p>
-          <p class="notif score"></p>
-        </div>
+            <option value="level1" selected>Level 1</option>
+            <option value="level2">Level 2</option>
+            <option value="level3">Level 3</option>
+            <option value="level4">Level 4</option>
+            <option value="level5">Level 5</option>
+            <option value="level6">Level 6</option>
+          </select> -->
+          <label class="tempo">Tempo:</label><br>
+          <select name="level" class="options tempo-select">
+            <option value="slow" selected>Slow</option>
+            <option value="med">Medium</option>
+            <option value="fast">Fast</option>
+            <option value="vfast">Ridiculous</option>
+          </select>
+          <label class="mode">Mode:</label><br>
+          <select name="mode" class="options mode-select">
+            <option value="seq" selected>Sequence</option>
+            <option value="chord">Chord</option>
+          </select>
+          <div class="diff">
+            <label for="difficulty">Difficulty:</label><br>
+            <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
+            <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
+          </div>
+          <div class="not">
+            <label for="notation">Notation:</label><br>
+            <input class="notation" type="radio" name="notation" value="on" checked>On<br>
+            <input class="notation" type="radio" name="notation" value="off">Off<br>
+          </div>
+        </form>
+        <p class="notif winmsg"></p>
+        <p class="notif pcmsg"></p>
+        <p class="notif current-level"></p>
+        <p class="notif score"></p>
       </div>
     </div>
-  </main>
+  </div>
+</main>
 </body>
 </html>
