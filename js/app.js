@@ -64,13 +64,13 @@ $( () => {
 
   // check if correct
   function checkMatch() {
-    console.log('pcNotes: '+pcNotes);
-    console.log('playerNotes: '+playerNotes);
+    // console.log('pcNotes: '+pcNotes);
+    // console.log('playerNotes: '+playerNotes);
     for (let i = 0; i < pcNotes.length; i++) {
       if (pcNotes[i] !== playerNotes[i]) {
         playerNotes = [];
-        $winmsg.html('Try again...');
         canRepeat = true;
+        $winmsg.html('Try again...');
         setTimeout( () => {
           $winmsg.html('');
         }, 1500);
@@ -79,17 +79,25 @@ $( () => {
     }
     // reset the array
     playerNotes = [];
-    $winmsg.html('Correct!');
     canRepeat = false;
-    $repeat.addClass('disabled');
     score = score + (currentLevel.score * currentDifficulty);
+    $repeat.addClass('disabled');
     $score.html('Score: '+score);
+    $winmsg.html('Correct!');
     setTimeout( () => {
       $winmsg.html('');
-    }, 1000);
+    }, 1500);
     return true;
   }
 
+  function keyDepress(note) {
+    $('#key'+note).addClass('depress');
+    setTimeout( () => {
+      $('#key'+note).removeClass('depress');
+    }, 500);
+  }
+
+  // note flashes red if it's wrong, white if it's correct
   function feedback(note, pos) {
     if (note===pcNotes[pos]) {
       $('#key'+note).addClass('correct');
@@ -104,6 +112,54 @@ $( () => {
     }
   }
 
+  function pcPlayback() {
+    const timer = setInterval( () => {
+      const thisNote = pcNotes[time];
+      if (currentDifficulty === 1) {
+        keyDepress(thisNote);
+      }
+      $audio[thisNote].currentTime=0;
+      $audio[thisNote].play();
+      time++;
+      if (time === pcNotes.length) {
+        // console.log('pcNotes: '+pcNotes);
+        $('.pcmsg').html('Your turn.');
+        clearInterval(timer);
+        time = 0;
+        canPlay = true;
+        canRepeat = true;
+        $repeat.removeClass('disabled');
+      }
+    }, tempo);
+  }
+
+  function playerPlayback(note) {
+    // play the note
+    $audio[note].currentTime=0;
+    $audio[note].play();
+    // depress the key
+    keyDepress(note);
+    // $('#key'+note).addClass('depress');
+    // setTimeout( () => {
+    //   $('#key'+note).removeClass('depress');
+    // }, 500);
+    // push the notes to the playerNotes array if canPlay
+    if (canPlay) {
+      feedback(parseInt(note), time);
+      playerNotes.push(parseInt(note));
+      time++;
+      if (time===pcNotes.length) {
+        // console.log(playerNotes);
+        // console.log('finish playing');
+        time = 0;
+        // check if match
+        if (checkMatch()) {
+          canPlay = false;
+          // console.log('correct');
+        }
+      }
+    }
+  }
 
   // level selector
   $('select').on('change', function() {
@@ -125,57 +181,15 @@ $( () => {
       return;
     }
     const keyboardNote = keyboardControl.indexOf(e.keyCode);
+    playerPlayback(keyboardNote);
 
-    $('#key'+keyboardNote).addClass('depress');
-    setTimeout( () => {
-      $('#key'+keyboardNote).removeClass('depress');
-    }, 500);
-    $audio[keyboardNote].currentTime=0;
-    $audio[keyboardNote].play();
-
-    if (canPlay) {
-      feedback(parseInt(keyboardNote), time);
-      playerNotes.push(parseInt(keyboardNote));
-      time++;
-      if (time===pcNotes.length) {
-        console.log(playerNotes);
-        console.log('finish playing');
-        time = 0;
-        // check if match
-        if (checkMatch()) {
-          console.log('correct');
-        }
-      }
-    }
   });
 
   // piano mouse playback
   $keys.on('mousedown', function(e) {
     const thisKey = e.target.id;
     const keyId = thisKey.slice(3);
-    // console.log(keyId);
-    $audio[keyId].currentTime=0;
-    $audio[keyId].play();
-
-    $('#key'+thisKey).addClass('depress');
-    setTimeout( () => {
-      $('#key'+thisKey).removeClass('depress');
-    }, 500);
-
-    if (canPlay) {
-      feedback(parseInt(keyId), time);
-      playerNotes.push(parseInt(keyId));
-      time++;
-      if (time===pcNotes.length) {
-        console.log(playerNotes);
-        console.log('finish playing');
-        time = 0;
-        // check if match
-        if (checkMatch()) {
-          console.log('correct');
-        }
-      }
-    }
+    playerPlayback(keyId);
   });
 
   // PC phrase playback
@@ -184,29 +198,7 @@ $( () => {
     playerNotes = [];
     pcNotes = [];
     pcNotes = genRand(currentLevel.phraseLength);
-    const timer = setInterval( () => {
-      const thisNote = pcNotes[time];
-      // console.log(time);
-      // console.log($('#key'+thisNote));
-      if (currentDifficulty === 1) {
-        $('#key'+thisNote).addClass('depress');
-        setTimeout( () => {
-          $('#key'+thisNote).removeClass('depress');
-        }, 500);
-      }
-      $audio[thisNote].currentTime=0;
-      $audio[thisNote].play();
-      time++;
-      if (time === pcNotes.length) {
-        // console.log('pcNotes: '+pcNotes);
-        $('.pcmsg').html('Your turn.');
-        clearInterval(timer);
-        time = 0;
-        canPlay = true;
-        canRepeat = true;
-        $repeat.removeClass('disabled');
-      }
-    }, tempo);
+    pcPlayback();
   });
 
   // PC repeat button
@@ -220,14 +212,11 @@ $( () => {
     $('.pcmsg').html('Playing...');
     const timer = setInterval( () => {
       const thisNote = pcNotes[time];
-      // console.log(time);
-      // console.log($('#key'+thisNote));
+
       if (currentDifficulty === 1) {
-        $('#key'+thisNote).addClass('depress');
-        setTimeout( () => {
-          $('#key'+thisNote).removeClass('depress');
-        }, 500);
+        keyDepress(thisNote);
       }
+
       $audio[thisNote].currentTime=0;
       $audio[thisNote].play();
       time++;

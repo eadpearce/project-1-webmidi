@@ -8,70 +8,75 @@
   <link href="https://fonts.googleapis.com/css?family=Cardo" rel="stylesheet">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
+  <script type="text/javascript" src="js/webmidi.min.js"></script>
   <title>WDI Project 1: Pitch Recognition Game</title>
 </head>
 <body>
   <main>
     <div class="title"><h1><span class="pre">Learn to play piano by ear, or: </span><br>Musical Simon Says</h1></div>
     <div class="container">
-      <div class="keyboard">
-        <ul class="black-label">
-          <li>C&#x266f;/<br>D&#x266d;</li>
-          <li>D&#x266f;/<br>E&#x266d;</li>
-          <li>F&#x266f;/<br>G&#x266d;</li>
-          <li>G&#x266f;/<br>A&#x266d;</li>
-          <li>A&#x266f;/<br>B&#x266d;</li>
-        </ul>
-        <ul class="black-keys">
-          <li class="keys black" id="key1"></li>
-          <li class="keys black" id="key3"></li>
-          <li class="keys black" id="key6"></li>
-          <li class="keys black" id="key8"></li>
-          <li class="keys black" id="key10"></li>
-        </ul>
-        <ul class="white-keys">
-          <li class="keys white" id="key0"></li>
-          <li class="keys white" id="key2"></li>
-          <li class="keys white" id="key4"></li>
-          <li class="keys white" id="key5"></li>
-          <li class="keys white" id="key7"></li>
-          <li class="keys white" id="key9"></li>
-          <li class="keys white" id="key11"></li>
-        </ul>
-        <!-- <audio id="piano" src=""></audio> -->
-        <ul class="white-label">
-          <li>C</li>
-          <li>D</li>
-          <li>E</li>
-          <li>F</li>
-          <li>G</li>
-          <li>A</li>
-          <li>B</li>
-        </ul>
+      <div class="left-content">
+        <div class="keyboard">
+          <ul class="black-label">
+            <li>C&#x266f;/<br>D&#x266d;</li>
+            <li>D&#x266f;/<br>E&#x266d;</li>
+            <li>F&#x266f;/<br>G&#x266d;</li>
+            <li>G&#x266f;/<br>A&#x266d;</li>
+            <li>A&#x266f;/<br>B&#x266d;</li>
+          </ul>
+          <ul class="black-keys">
+            <li class="keys black" id="key1"></li>
+            <li class="keys black" id="key3"></li>
+            <li class="keys black" id="key6"></li>
+            <li class="keys black" id="key8"></li>
+            <li class="keys black" id="key10"></li>
+          </ul>
+          <ul class="white-keys">
+            <li class="keys white" id="key0"></li>
+            <li class="keys white" id="key2"></li>
+            <li class="keys white" id="key4"></li>
+            <li class="keys white" id="key5"></li>
+            <li class="keys white" id="key7"></li>
+            <li class="keys white" id="key9"></li>
+            <li class="keys white" id="key11"></li>
+          </ul>
+          <!-- <audio id="piano" src=""></audio> -->
+          <ul class="white-label">
+            <li>C</li>
+            <li>D</li>
+            <li>E</li>
+            <li>F</li>
+            <li>G</li>
+            <li>A</li>
+            <li>B</li>
+          </ul>
+        </div>
+        <div class="instructions">
+          You can play the piano with the mouse by clicking or by using the keys A to J for white notes and W to U for black notes.
+        </div>
       </div>
-      <div class="controls">
-        <button class="options play">Play</button>
-        <button class="options repeat">Repeat (-1 point)</button>
-        <form>
-          <label for="level">Select level:</label><br>
-          <select name="level" class="options">
-            <option value="level1" selected>Level 1</option>
-            <option value="level2">Level 2</option>
-            <option value="level3">Level 3</option>
-            <option value="level4">Level 4</option>
-            <option value="level5">Level 5</option>
-            <option value="level6">Level 6</option>
-          </select>
-          <label for="difficulty">Difficulty:</label><br>
-          <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
-          <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
-        </form>
-        <p class="notif winmsg">Win msg</p>
-        <p class="notif pcmsg">PC msg</p>
-        <p class="notif score">Score</p>
-      </div>
-      <div class="instructions">
-        You can play the piano with the mouse by clicking or by using the keys A, W, S, E, D, F, T, G, Y, H, U and J.
+      <div class="right-content">
+        <div class="controls">
+          <button class="options play">Play</button>
+          <button class="options repeat">Repeat (-1 point)</button>
+          <form>
+            <label class="level">Select level:</label><br>
+            <select name="level" class="options">
+              <option value="level1" selected>Level 1</option>
+              <option value="level2">Level 2</option>
+              <option value="level3">Level 3</option>
+              <option value="level4">Level 4</option>
+              <option value="level5">Level 5</option>
+              <option value="level6">Level 6</option>
+            </select>
+            <label for="difficulty">Difficulty:</label><br>
+            <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
+            <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
+          </form>
+          <p class="notif winmsg">Win msg</p>
+          <p class="notif pcmsg">PC msg</p>
+          <p class="notif score">Score</p>
+        </div>
       </div>
     </div>
   </main>

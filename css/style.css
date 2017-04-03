@@ -6,13 +6,30 @@ body {
   font-family: 'Cardo', serif;
   font-size: 16px;
 }
+main {
+  width: 530px;
+  margin: 100px auto;
+}
+.container {
+  background-color: #eee;
+  height: 400px;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+.left-content {
+  float: left;
+    width: 308px;
+}
+.right-content {
+  float: right;
+}
 .keyboard {
-  width: 308px;
   height: 260px;
   float: left;
 }
 .instructions {
-  padding-top: 20px;
+  padding-top: 10px;
   line-height: 1.3em;
   clear: both;
 }
@@ -43,22 +60,12 @@ label {
 .notif:after {
   content: '\00a0';
 }
-main {
-  width: 530px;
-  margin: 100px auto;
-}
 h1 {
   text-align: center;
   padding: 20px 0;
   font-size: 30px;
   font-weight: bold;
   line-height: 1.3em;
-}
-.container {
-  background-color: #eee;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid black;
 }
 .controls {
   height: 260px;
@@ -93,7 +100,7 @@ li.black:nth-child(3) {
 .white-label li {
   display: inline-block;
   margin-top: 3px;
-  width: 40px;
+  width: 38px;
   text-align: center;
 }
 .white-keys li {
@@ -104,17 +111,16 @@ li.black:nth-child(3) {
   float: left;
 }
 ul.black-label {
-  margin-left: 27px;
+  margin-left: 22px;
 }
 .black-label li {
   display: inline-block;
   margin-bottom: 3px;
-  margin-right: 3px;
   width: 40px;
   text-align: center;
 }
 .black-label li:nth-child(3) {
-  margin-left: 42px;
+  margin-left: 37px;
 }
 .white {
   background: white;
