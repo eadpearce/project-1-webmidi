@@ -25,9 +25,11 @@ let pcNotes = [];
 // score weighting for difficulty - 1 is easy 2 is hard
 let currentDifficulty = 1;
 let canPlay = false;
+let canRepeat = false;
 let score = 0;
 let tempo = 1000;
 
+// generate a random phrase
 function genRand(length) {
   // copy currentLevel.notes to availNotes
   const availNotes = [];
@@ -35,7 +37,6 @@ function genRand(length) {
   const output = [];
   for (var i = 0; i < length; i++) {
     const randIndex = Math.floor(Math.random() * availNotes.length);
-    // const randNote = availNotes[randIndex];
     const num = availNotes.splice(randIndex, 1)[0];
     output.push(num);
   }
@@ -59,6 +60,7 @@ $( () => {
   const $winmsg = $('.winmsg');
   const $score = $('.score');
   $score.html('Score: '+score);
+  $repeat.addClass('disabled');
 
   // check if correct
   function checkMatch() {
@@ -68,6 +70,7 @@ $( () => {
       if (pcNotes[i] !== playerNotes[i]) {
         playerNotes = [];
         $winmsg.html('Try again...');
+        canRepeat = true;
         setTimeout( () => {
           $winmsg.html('');
         }, 1500);
@@ -77,6 +80,8 @@ $( () => {
     // reset the array
     playerNotes = [];
     $winmsg.html('Correct!');
+    canRepeat = false;
+    $repeat.addClass('disabled');
     score = score + (currentLevel.score * currentDifficulty);
     $score.html('Score: '+score);
     setTimeout( () => {
@@ -84,6 +89,21 @@ $( () => {
     }, 1000);
     return true;
   }
+
+  function feedback(note, pos) {
+    if (note===pcNotes[pos]) {
+      $('#key'+note).addClass('correct');
+      setTimeout( () => {
+        $('#key'+note).removeClass('correct');
+      }, 500);
+    } else {
+      $('#key'+note).addClass('wrong');
+      setTimeout( () => {
+        $('#key'+note).removeClass('wrong');
+      }, 500);
+    }
+  }
+
 
   // level selector
   $('select').on('change', function() {
@@ -114,6 +134,7 @@ $( () => {
     $audio[keyboardNote].play();
 
     if (canPlay) {
+      feedback(parseInt(keyboardNote), time);
       playerNotes.push(parseInt(keyboardNote));
       time++;
       if (time===pcNotes.length) {
@@ -142,6 +163,7 @@ $( () => {
     }, 500);
 
     if (canPlay) {
+      feedback(parseInt(keyId), time);
       playerNotes.push(parseInt(keyId));
       time++;
       if (time===pcNotes.length) {
@@ -181,12 +203,18 @@ $( () => {
         clearInterval(timer);
         time = 0;
         canPlay = true;
+        canRepeat = true;
+        $repeat.removeClass('disabled');
       }
     }, tempo);
   });
 
   // PC repeat button
-  $repeat.on('click', function() {
+  $repeat.on('click', function(e) {
+    if (!canRepeat) {
+      e.preventDefault();
+      return;
+    }
     score--;
     $score.html('Score: '+score);
     $('.pcmsg').html('Playing...');

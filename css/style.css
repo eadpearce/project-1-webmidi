@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 body {
-  background: lightgrey;
+  background: white;
   font-family: 'Cardo', serif;
   font-size: 16px;
 }
@@ -55,7 +55,7 @@ h1 {
   line-height: 1.3em;
 }
 .container {
-  background-color: white;
+  background-color: #eee;
   padding: 20px;
   border-radius: 5px;
   border: 1px solid black;
@@ -68,12 +68,20 @@ h1 {
 .options:hover {
   background: #ddd;
 }
+.disabled {
+  background: darkgrey;
+  color: grey;
+  border-color: darkgrey;
+}
+.disabled:hover {
+  background: darkgrey;
+}
 .black-keys {
-  margin-left: 26px;
+  margin-left: 27px;
   position: absolute;
 }
 li.black:nth-child(3) {
-  margin-left: 45px;
+  margin-left: 42px;
 }
 .keys {
   border: 2px solid black;
@@ -88,8 +96,15 @@ li.black:nth-child(3) {
   width: 40px;
   text-align: center;
 }
+.white-keys li {
+  float: left;
+  margin: 0 1px;
+}
+.black-keys li {
+  float: left;
+}
 ul.black-label {
-  margin-left: 20px;
+  margin-left: 27px;
 }
 .black-label li {
   display: inline-block;
@@ -99,7 +114,7 @@ ul.black-label {
   text-align: center;
 }
 .black-label li:nth-child(3) {
-  margin-left: 35px;
+  margin-left: 42px;
 }
 .white {
   background: white;
@@ -108,7 +123,7 @@ ul.black-label {
 .black {
   background: black;
   width: 30px;
-  margin-right: 10px;
+  margin-right: 12px;
   height: 110px;
   transition: 0.2s ease;
 }
@@ -126,4 +141,10 @@ ul.black-label {
 .black.depress {
   background: #555;
   transition: 0.2s ease;
+}
+.wrong {
+  border-color: red;
+}
+.correct {
+  border-color: white;
 }
