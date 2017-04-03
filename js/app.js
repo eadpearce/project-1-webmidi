@@ -16,18 +16,18 @@ const levels = {
   7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
 };
 const manuscript = {
-  0: '<li class="note c"></li><li class="ledger"></li>',
-  1: '<li class="flat d-flat"></li><li class="note d"></li>',
-  2: '<li class="note d"></li>',
-  3: '<li class="flat e-flat"></li><li class="note e"></li>',
-  4: '<li class="note e"></li>',
-  5: '<li class="note f"></li>',
-  6: '<li class="flat g-flat"></li><li class="note g"></li>',
-  7: '<li class="note g"></li>',
-  8: '<li class="flat a-flat"></li><li class="note a"></li>',
-  9: '<li class="note a"></li>',
-  10: '<li class="flat b-flat"></li><li class="note b"></li>',
-  11: '<li class="note b"></li>'
+  0: 'c',
+  1: 'd',
+  2: 'd',
+  3: 'e',
+  4: 'e',
+  5: 'f',
+  6: 'g',
+  7: 'g',
+  8: 'a',
+  9: 'a',
+  10: 'b',
+  11: 'b'
 };
 
 // start at level1 by default
@@ -79,7 +79,7 @@ $( () => {
   const $keys = $('.keys');
   const $winmsg = $('.winmsg');
   const $score = $('.score');
-  const $notes = $('.notes');
+  const notes = document.querySelector('.notes');
   $score.html('Score: '+score);
   $retry.addClass('disabled');
 
@@ -154,6 +154,19 @@ $( () => {
     }
   }
 
+  function updateManuscript(playedNote) {
+    if (playedNote === 1 || playedNote === 3 || playedNote === 6 || playedNote === 8 || playedNote === 10 ) {
+      const accidental = document.createElement('li');
+      accidental.classList.add('flat');
+      accidental.classList.add(manuscript[playedNote]+'-flat');
+      notes.appendChild(accidental);
+    }
+    const note = document.createElement('li');
+    note.classList.add('note');
+    note.classList.add(manuscript[playedNote]);
+    notes.appendChild(note);
+  }
+
   function pcPlayback() {
     const timer = setInterval( () => {
       const thisNote = pcNotes[time];
@@ -162,10 +175,12 @@ $( () => {
       }
       $audio[thisNote].currentTime=0;
       $audio[thisNote].play();
-      $notes.html(manuscript[thisNote]);
+      if (currentDifficulty===1) {
+        updateManuscript(thisNote);
+      }
+      // $notes.html(manuscript[thisNote]);
       time++;
       if (time === pcNotes.length) {
-        $('.pcmsg').html('Your turn.');
         clearInterval(timer);
         time = 0;
         canPlay = true;
