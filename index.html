@@ -52,16 +52,17 @@
           </ul>
         </div>
         <div class="instructions">
-          You can play the piano with the mouse by clicking or by using the keys A to J for white notes and W to U for black notes.
+          <p>Press the play button to listen to the computer then try to play the melody back correctly.</p>
+          <p>You can play the piano with the mouse/touchscreen or by using the keys A to J for white notes and W to U for black notes.</p>
         </div>
       </div>
       <div class="right-content">
         <div class="controls">
           <button class="options play">Play</button>
-          <button class="options repeat">Repeat (-1 point)</button>
+          <button class="options retry">Retry (-1 point)</button>
           <form>
             <label class="level">Select level:</label><br>
-            <select name="level" class="options">
+            <select name="level" class="options level-select">
               <option value="level1" selected>Level 1</option>
               <option value="level2">Level 2</option>
               <option value="level3">Level 3</option>
@@ -69,13 +70,20 @@
               <option value="level5">Level 5</option>
               <option value="level6">Level 6</option>
             </select>
+            <label class="tempo">Select tempo:</label><br>
+            <select name="level" class="options tempo-select">
+              <option value="slow" selected>Slow</option>
+              <option value="med">Medium</option>
+              <option value="fast">Fast</option>
+              <option value="vfast">Ridiculous</option>
+            </select>
             <label for="difficulty">Difficulty:</label><br>
             <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
             <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
           </form>
-          <p class="notif winmsg">Win msg</p>
-          <p class="notif pcmsg">PC msg</p>
-          <p class="notif score">Score</p>
+          <p class="notif winmsg"></p>
+          <p class="notif pcmsg"></p>
+          <p class="notif score"></p>
         </div>
       </div>
     </div>

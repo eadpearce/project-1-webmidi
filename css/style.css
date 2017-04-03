@@ -8,11 +8,11 @@ body {
 }
 main {
   width: 530px;
-  margin: 100px auto;
+  margin: 50px auto;
 }
 .container {
   background-color: #eee;
-  height: 400px;
+  height: 450px;
   padding: 20px;
   border-radius: 5px;
   border: 1px solid black;
@@ -48,9 +48,6 @@ main {
 label {
   font-weight: bold;
 }
-.pre {
-  font-size: 25px;
-}
 .notif {
   margin: 20px 0;
   padding: 0 10px;
@@ -59,6 +56,9 @@ label {
 }
 .notif:after {
   content: '\00a0';
+}
+.pre {
+  font-size: 20px;
 }
 h1 {
   text-align: center;

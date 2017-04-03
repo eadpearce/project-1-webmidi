@@ -25,9 +25,15 @@ let pcNotes = [];
 // score weighting for difficulty - 1 is easy 2 is hard
 let currentDifficulty = 1;
 let canPlay = false;
-let canRepeat = false;
+let canRetry = false;
 let score = 0;
-let tempo = 1000;
+let currentTempo = 1000;
+const tempi = {
+  'slow': 1000,
+  'med': 500,
+  'fast': 250,
+  'vfast': 125
+};
 
 // generate a random phrase
 function genRand(length) {
@@ -55,12 +61,35 @@ $( () => {
 
   const $audio = $('audio');
   const $play = $('.play');
-  const $repeat = $('.repeat');
+  const $retry = $('.retry');
   const $keys = $('.keys');
   const $winmsg = $('.winmsg');
   const $score = $('.score');
   $score.html('Score: '+score);
-  $repeat.addClass('disabled');
+  $retry.addClass('disabled');
+
+
+  // level selector
+  $('.level-select').on('change', function() {
+    currentLevel = levels[parseInt(this.value.slice(5))];
+    console.log(this.value);
+  });
+
+  // tempo selector
+  $('.tempo-select').on('change', function() {
+    currentTempo = tempi[this.value];
+    console.log(tempi[this.value]);
+    console.log(this.value);
+  });
+
+  // difficulty selector
+  $('.difficulty').on('change', function(e) {
+    if (e.target.value === 'easy') {
+      currentDifficulty = 1;
+    } else if (e.target.value === 'hard') {
+      currentDifficulty = 2;
+    }
+  });
 
   // check if correct
   function checkMatch() {
@@ -69,7 +98,8 @@ $( () => {
     for (let i = 0; i < pcNotes.length; i++) {
       if (pcNotes[i] !== playerNotes[i]) {
         playerNotes = [];
-        canRepeat = true;
+        canRetry = true;
+        canPlay = false;
         $winmsg.html('Try again...');
         setTimeout( () => {
           $winmsg.html('');
@@ -79,9 +109,9 @@ $( () => {
     }
     // reset the array
     playerNotes = [];
-    canRepeat = false;
+    canRetry = false;
     score = score + (currentLevel.score * currentDifficulty);
-    $repeat.addClass('disabled');
+    $retry.addClass('disabled');
     $score.html('Score: '+score);
     $winmsg.html('Correct!');
     setTimeout( () => {
@@ -122,15 +152,14 @@ $( () => {
       $audio[thisNote].play();
       time++;
       if (time === pcNotes.length) {
-        // console.log('pcNotes: '+pcNotes);
         $('.pcmsg').html('Your turn.');
         clearInterval(timer);
         time = 0;
         canPlay = true;
-        canRepeat = true;
-        $repeat.removeClass('disabled');
+        canRetry = true;
+        $retry.removeClass('disabled');
       }
-    }, tempo);
+    }, currentTempo);
   }
 
   function playerPlayback(note) {
@@ -139,53 +168,31 @@ $( () => {
     $audio[note].play();
     // depress the key
     keyDepress(note);
-    // $('#key'+note).addClass('depress');
-    // setTimeout( () => {
-    //   $('#key'+note).removeClass('depress');
-    // }, 500);
     // push the notes to the playerNotes array if canPlay
     if (canPlay) {
       feedback(parseInt(note), time);
       playerNotes.push(parseInt(note));
       time++;
       if (time===pcNotes.length) {
-        // console.log(playerNotes);
-        // console.log('finish playing');
         time = 0;
         // check if match
         if (checkMatch()) {
           canPlay = false;
-          // console.log('correct');
         }
       }
     }
   }
 
-  // level selector
-  $('select').on('change', function() {
-    currentLevel = levels[parseInt(this.value.slice(5))];
-  });
-
-  // difficulty selector
-  $('.difficulty').on('change', function(e) {
-    if (e.target.value === 'easy') {
-      currentDifficulty = 1;
-    } else if (e.target.value === 'hard') {
-      currentDifficulty = 2;
-    }
-  });
-
-  // keyboard playback
+  // computer keyboard playback
   $(document).keydown( function(e) {
     if ($.inArray( e.keyCode, keyboardControl)===-1) {
       return;
     }
     const keyboardNote = keyboardControl.indexOf(e.keyCode);
     playerPlayback(keyboardNote);
-
   });
 
-  // piano mouse playback
+  // mouse playback
   $keys.on('mousedown', function(e) {
     const thisKey = e.target.id;
     const keyId = thisKey.slice(3);
@@ -201,15 +208,18 @@ $( () => {
     pcPlayback();
   });
 
-  // PC repeat button
-  $repeat.on('click', function(e) {
-    if (!canRepeat) {
+  // PC retry/repeat button
+  $retry.on('click', function(e) {
+    if (!canRetry) {
       e.preventDefault();
       return;
     }
-    score--;
+    if (score > 0) {
+      score--;
+    }
     $score.html('Score: '+score);
     $('.pcmsg').html('Playing...');
+
     const timer = setInterval( () => {
       const thisNote = pcNotes[time];
 
@@ -220,6 +230,7 @@ $( () => {
       $audio[thisNote].currentTime=0;
       $audio[thisNote].play();
       time++;
+
       if (time === pcNotes.length) {
         // console.log('pcNotes: '+pcNotes);
         $('.pcmsg').html('Your turn.');
@@ -227,7 +238,7 @@ $( () => {
         time = 0;
         canPlay = true;
       }
-    }, tempo);
+    }, currentTempo);
   });
 
 
