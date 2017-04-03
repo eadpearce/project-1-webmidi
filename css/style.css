@@ -17,8 +17,8 @@ body {
   clear: both;
 }
 .options {
-  width: 130px;
-  margin: 10px 0;
+  width: 160px;
+  margin: 5px 0;
   font-family: 'Cardo', serif;
   font-weight:bold;
   line-height: 1.5em;
@@ -34,17 +34,17 @@ label {
 .pre {
   font-size: 25px;
 }
-.winmsg {
+.notif {
   margin: 20px 0;
   padding: 0 10px;
   font-weight: bold;
   font-size: 20px;
 }
-.winmsg:after {
+.notif:after {
   content: '\00a0';
 }
 main {
-  width: 500px;
+  width: 530px;
   margin: 100px auto;
 }
 h1 {
@@ -62,10 +62,10 @@ h1 {
 }
 .controls {
   height: 260px;
-  width: 130px;
+  width: 160px;
   float: right;
 }
-.play:hover {
+.options:hover {
   background: #ddd;
 }
 .black-keys {

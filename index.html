@@ -51,8 +51,9 @@
       </div>
       <div class="controls">
         <button class="options play">Play</button>
+        <button class="options repeat">Repeat (-1 point)</button>
         <form>
-          <label for="level">Select level:</label>
+          <label for="level">Select level:</label><br>
           <select name="level" class="options">
             <option value="level1" selected>Level 1</option>
             <option value="level2">Level 2</option>
@@ -65,7 +66,9 @@
           <input class="difficulty" type="radio" name="difficulty" value="easy" checked> Easy<br>
           <input class="difficulty" type="radio" name="difficulty" value="hard"> Hard<br>
         </form>
-        <p class="winmsg"></p>
+        <p class="notif winmsg">Win msg</p>
+        <p class="notif pcmsg">PC msg</p>
+        <p class="notif score">Score</p>
       </div>
       <div class="instructions">
         You can play the piano with the mouse by clicking or by using the keys A, W, S, E, D, F, T, G, Y, H, U and J.

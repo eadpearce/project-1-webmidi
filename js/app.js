@@ -7,13 +7,13 @@
 // index corresponds to note ID
 const keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
 const levels = {
-  1: { notes: [0,2,4], phraseLength: 3 },
-  2: { notes: [0,2,4,5,7], phraseLength: 4 },
-  3: { notes: [0,2,4,5,7,9,11], phraseLength: 4 },
-  4: { notes: [0,2,4,5,7,9,11], phraseLength: 5 },
-  5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5 },
-  6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5 },
-  7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7 }
+  1: { notes: [0,2,4], phraseLength: 3, score: 1},
+  2: { notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
+  3: { notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
+  4: { notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
+  5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
+  6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
+  7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
 };
 
 // start at level1 by default
@@ -22,9 +22,11 @@ let currentLevel = levels[1];
 let time = 0;
 let playerNotes = [];
 let pcNotes = [];
-let currentDifficulty = 'easy';
+// score weighting for difficulty - 1 is easy 2 is hard
+let currentDifficulty = 1;
 let canPlay = false;
-
+let score = 0;
+let tempo = 1000;
 
 function genRand(length) {
   // copy currentLevel.notes to availNotes
@@ -41,10 +43,6 @@ function genRand(length) {
 }
 
 $( () => {
-  const $play = $('.play');
-  const $keys = $('.keys');
-  const $winmsg = $('.winmsg');
-
   // set up audio tags and src FIRST
   const container = document.querySelector('.container');
   for (let i = 0; i < 12; i++) {
@@ -53,8 +51,14 @@ $( () => {
     audios.src = 'sounds/audio'+i+'.ogg';
     container.appendChild(audios);
   }
-  // THEN assign them to variable
+
   const $audio = $('audio');
+  const $play = $('.play');
+  const $repeat = $('.repeat');
+  const $keys = $('.keys');
+  const $winmsg = $('.winmsg');
+  const $score = $('.score');
+  $score.html('Score: '+score);
 
   // check if correct
   function checkMatch() {
@@ -66,13 +70,15 @@ $( () => {
         $winmsg.html('Try again...');
         setTimeout( () => {
           $winmsg.html('');
-        }, 1000);
+        }, 1500);
         return false;
       }
     }
     // reset the array
     playerNotes = [];
     $winmsg.html('Correct!');
+    score = score + (currentLevel.score * currentDifficulty);
+    $score.html('Score: '+score);
     setTimeout( () => {
       $winmsg.html('');
     }, 1000);
@@ -87,9 +93,9 @@ $( () => {
   // difficulty selector
   $('.difficulty').on('change', function(e) {
     if (e.target.value === 'easy') {
-      currentDifficulty = 'easy';
+      currentDifficulty = 1;
     } else if (e.target.value === 'hard') {
-      currentDifficulty = 'hard';
+      currentDifficulty = 2;
     }
   });
 
@@ -152,6 +158,7 @@ $( () => {
 
   // PC phrase playback
   $play.on('click', function() {
+    $('.pcmsg').html('Playing...');
     playerNotes = [];
     pcNotes = [];
     pcNotes = genRand(currentLevel.phraseLength);
@@ -159,7 +166,7 @@ $( () => {
       const thisNote = pcNotes[time];
       // console.log(time);
       // console.log($('#key'+thisNote));
-      if (currentDifficulty === 'easy') {
+      if (currentDifficulty === 1) {
         $('#key'+thisNote).addClass('depress');
         setTimeout( () => {
           $('#key'+thisNote).removeClass('depress');
@@ -170,11 +177,40 @@ $( () => {
       time++;
       if (time === pcNotes.length) {
         // console.log('pcNotes: '+pcNotes);
+        $('.pcmsg').html('Your turn.');
         clearInterval(timer);
         time = 0;
         canPlay = true;
       }
-    }, 1000);
+    }, tempo);
+  });
+
+  // PC repeat button
+  $repeat.on('click', function() {
+    score--;
+    $score.html('Score: '+score);
+    $('.pcmsg').html('Playing...');
+    const timer = setInterval( () => {
+      const thisNote = pcNotes[time];
+      // console.log(time);
+      // console.log($('#key'+thisNote));
+      if (currentDifficulty === 1) {
+        $('#key'+thisNote).addClass('depress');
+        setTimeout( () => {
+          $('#key'+thisNote).removeClass('depress');
+        }, 500);
+      }
+      $audio[thisNote].currentTime=0;
+      $audio[thisNote].play();
+      time++;
+      if (time === pcNotes.length) {
+        // console.log('pcNotes: '+pcNotes);
+        $('.pcmsg').html('Your turn.');
+        clearInterval(timer);
+        time = 0;
+        canPlay = true;
+      }
+    }, tempo);
   });
 
 
