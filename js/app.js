@@ -81,7 +81,7 @@ function genRand(length) {
 
 function genRandChord(size) {
   // copy currentLevel.notes to availNotes
-  const randKey = Math.floor(Math.random() * size);
+  const randKey = Math.floor(Math.random() * size+1);
   console.log(mode.chord[currentLevel].notes[randKey]);
   return mode.chord[currentLevel].notes[randKey];
 }
@@ -138,35 +138,43 @@ $( () => {
   });
   // check if correct
   function checkMatch() {
-    if (currentMode === 'chord') {
-      for (let i = 0; i < playerNotes.length; i++) {
-        if ($.inArray( playerNotes[i], pcNotes)===-1) {
-          return false;
-        } else {
-          const pcSorted = pcNotes.sort();
-          const playerSorted = playerNotes.sort();
-          let correct = 0;
-          if (pcSorted[i] === playerSorted[i]) {
-            correct++;
-          } else if (correct === pcNotes.length) {
-            console.log('correct');
-          }
-        }
+    for (let i = 0; i < pcNotes.length; i++) {
+      if (pcNotes[i] !== playerNotes[i]) {
+        playerNotes = [];
+        canRetry = true;
+        canPlay = false;
+        $winmsg.html('Try again...');
+        setTimeout( () => {
+          $winmsg.html('');
+        }, 1500);
+        return false;
       }
-    } else if (currentMode === 'seq') {
-      for (let i = 0; i < pcNotes.length; i++) {
-        if (pcNotes[i] !== playerNotes[i]) {
-          playerNotes = [];
-          canRetry = true;
-          canPlay = false;
-          $winmsg.html('Try again...');
-          setTimeout( () => {
-            $winmsg.html('');
-          }, 1500);
-          return false;
+    }
+    ifWin();
+    return true;
+  }
+
+  function checkMatchChord() {
+    let correct = 0;
+    for (let i = 0; i < playerNotes.length; i++) {
+      if ($.inArray( playerNotes[i], pcNotes)===-1) {
+        return false;
+      } else {
+        const pcSorted = pcNotes.sort();
+        const playerSorted = playerNotes.sort();
+        if (pcSorted[i] === playerSorted[i]) {
+          correct++;
         }
       }
     }
+    if (correct === pcNotes.length) {
+      console.log('correct');
+    }
+    ifWin();
+    return true;
+  }
+
+  function ifWin() {
     // if correct
     playerNotes = [];
     canRetry = false;
@@ -174,7 +182,7 @@ $( () => {
     $retry.addClass('disabled');
     $score.html('Score: '+score);
     $winmsg.html('Correct!');
-    return true;
+    $('.pcmsg').html('');
   }
 
   function keyDepress(note) {
@@ -269,8 +277,14 @@ $( () => {
       if (time===pcNotes.length) {
         time = 0;
         // check if match
-        if (checkMatch()) {
-          canPlay = false;
+        if (currentMode === 'chord') {
+          if (checkMatchChord()) {
+            canPlay = false;
+          }
+        } else if (currentMode === 'seq') {
+          if (checkMatch()) {
+            canPlay = false;
+          }
         }
       }
     }
@@ -320,6 +334,11 @@ $( () => {
     }
     $score.html('Score: '+score);
     $('.pcmsg').html('Playing...');
+
+    if (currentMode === 'chord') {
+      pcChordPlayback();
+      return;
+    }
     pcPlayback();
   });
 
