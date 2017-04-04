@@ -44,6 +44,7 @@ let pcNotes = [];
 let canPlay = false;
 let canRetry = false;
 let useNotation = true;
+let canMove = true;
 // let levelScore = 0;
 let score = 0;
 const tempi = {
@@ -99,7 +100,13 @@ $( () => {
   $retry.addClass('disabled');
 
   $go.on('click', () => {
-    setInterval(moveNote, 1500);
+    if (canMove) {
+      canMove = false;
+      const moveInterval = setInterval(moveNote, 1500);
+    } else {
+      canMove = true;
+      clearInterval(moveInterval);
+    }
   });
 
   // level selector
@@ -221,16 +228,47 @@ $( () => {
     }
   }
 
-  function moveNote(note) {
+  function moveNote() {
     const newNote = document.createElement('li');
-    newNote.classList.add('note-right');
-    newNote.classList.add(note);
+    newNote.classList.add('move');
+    newNote.classList.add('note');
+    const randNote = Math.floor(Math.random() * 11);
+    newNote.classList.add(manuscript[randNote]);
+    // add accidentals
+    if (randNote === 1 || randNote === 3 || randNote === 6 || randNote === 8 || randNote === 10 ) {
+      const accidental = document.createElement('li');
+      accidental.classList.add('move');
+      accidental.classList.add('flat');
+      accidental.classList.add(manuscript[randNote]+'-flat');
+      notes.appendChild(accidental);
+      notes.appendChild(newNote);
+      // animation
+      $('.manuscript').find('.move').animate({
+        'left': '-=460px'
+      }, 4000, 'linear', function() {
+        $(this).remove();
+      });
+      return;
+    } else if ( randNote === 0 ) {
+      const ledger = document.createElement('li');
+      ledger.classList.add('move');
+      ledger.classList.add('ledger');
+      notes.appendChild(ledger);
+      notes.appendChild(newNote);
+      // animation
+      $('.manuscript').find('.move').animate({
+        'left': '-=460px'
+      }, 4000, 'linear', function() {
+        $(this).remove();
+      });
+      return;
+
+    }
     notes.appendChild(newNote);
     // animation
-    $('.manuscript').find('.note-right').animate({
-      marginLeft: 0,
-      display: 'none'
-    }, 3000, 'linear', function() {
+    $('.manuscript').find('.move').animate({
+      marginLeft: 0
+    }, 4000, 'linear', function() {
       $(this).remove();
     });
   }
