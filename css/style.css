@@ -210,6 +210,14 @@ ul.black-label {
 .note:after {
   content: '\2669'
 }
+.note-move {
+  margin-left: 460px;
+  position: absolute;
+  clear: left;
+}
+.note-move:after {
+  content: '\2669'
+}
 .b {
   padding-top: 1px;
 }

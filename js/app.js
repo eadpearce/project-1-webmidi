@@ -30,20 +30,7 @@ const mode = {
     7: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [11,3,6], 13: [2,6,11], 14: [0,3,6,8], 15: [2,5,8] }, score: 7}
   }
 };
-const manuscript = {
-  0: 'c',
-  1: 'd',
-  2: 'd',
-  3: 'e',
-  4: 'e',
-  5: 'f',
-  6: 'g',
-  7: 'g',
-  8: 'a',
-  9: 'a',
-  10: 'b',
-  11: 'b'
-};
+const manuscript = { 0: 'c', 1: 'd', 2: 'd', 3: 'e', 4: 'e', 5: 'f', 6: 'g', 7: 'g', 8: 'a', 9: 'a', 10: 'b', 11: 'b' };
 // start at level1 by default
 let currentLevel = 1;
 let currentMode = 'seq';
@@ -57,6 +44,7 @@ let pcNotes = [];
 let canPlay = false;
 let canRetry = false;
 let useNotation = true;
+// let levelScore = 0;
 let score = 0;
 const tempi = {
   slow: { tempo: 1000, score: 1 },
@@ -87,6 +75,7 @@ function genRandChord(size) {
 }
 
 $( () => {
+
   // set up audio tags and src FIRST
   const container = document.querySelector('.container');
   for (let i = 0; i < 12; i++) {
@@ -98,6 +87,7 @@ $( () => {
 
   const $audio = $('audio');
   const $play = $('.play');
+  const $go = $('.go');
   const $retry = $('.retry');
   const $keys = $('.keys');
   const $winmsg = $('.winmsg');
@@ -108,10 +98,15 @@ $( () => {
   $score.html('Score: '+score);
   $retry.addClass('disabled');
 
-  // // level selector
-  // $('.level-select').on('change', function() {
-  //   currentLevel = mode[currentMode][currentLevel][parseInt(this.value.slice(5))];
-  // });
+  $go.on('click', () => {
+    setInterval(moveNote, 1500);
+  });
+
+  // level selector
+  $('.level-select').on('change', function() {
+    currentLevel =parseInt(this.value.slice(5));
+    $level.html('Level '+this.value.slice(5));
+  });
   // tempo selector
   $('.tempo-select').on('change', function(e) {
     currentTempo = e.target.value;
@@ -122,11 +117,7 @@ $( () => {
   });
   // difficulty selector
   $('.difficulty').on('change', function(e) {
-    if (e.target.value === 'easy') {
-      currentDifficulty = 1;
-    } else if (e.target.value === 'hard') {
-      currentDifficulty = 2;
-    }
+    currentDifficulty = parseInt(e.target.value);
   });
   // notation on/off (doesn't affect score)
   $('.notation').on('change', function(e) {
@@ -136,6 +127,7 @@ $( () => {
       useNotation = false;
     }
   });
+
   // check if correct
   function checkMatch() {
     for (let i = 0; i < pcNotes.length; i++) {
@@ -160,9 +152,8 @@ $( () => {
       if ($.inArray( playerNotes[i], pcNotes)===-1) {
         return false;
       } else {
-        const pcSorted = pcNotes.sort();
         const playerSorted = playerNotes.sort();
-        if (pcSorted[i] === playerSorted[i]) {
+        if (pcNotes[i] === playerSorted[i]) {
           correct++;
         }
       }
@@ -175,14 +166,19 @@ $( () => {
   }
 
   function ifWin() {
-    // if correct
     playerNotes = [];
     canRetry = false;
+    // levelScore++;
     score = score + (mode[currentMode][currentLevel].score * currentDifficulty * tempi[currentTempo].score);
     $retry.addClass('disabled');
     $score.html('Score: '+score);
     $winmsg.html('Correct!');
     $('.pcmsg').html('');
+    // // progress to next level at 5 wins
+    // if (levelScore%5 === 0) {
+    //   currentLevel++;
+    //   $level.html('Level '+currentLevel);
+    // }
   }
 
   function keyDepress(note) {
@@ -191,6 +187,7 @@ $( () => {
       $('#key'+note).removeClass('depress');
     }, 250);
   }
+
   // note flashes red if it's wrong, white if it's correct
   function feedback(note, pos) {
     if (note===pcNotes[pos]) {
@@ -223,6 +220,21 @@ $( () => {
       notes.appendChild(ledger);
     }
   }
+
+  function moveNote(note) {
+    const newNote = document.createElement('li');
+    newNote.classList.add('note-right');
+    newNote.classList.add(note);
+    notes.appendChild(newNote);
+    // animation
+    $('.manuscript').find('.note-right').animate({
+      marginLeft: 0,
+      display: 'none'
+    }, 3000, 'linear', function() {
+      $(this).remove();
+    });
+  }
+
 
   function pcPlayback() {
     const timer = setInterval( () => {
@@ -308,10 +320,11 @@ $( () => {
 
   // PC phrase playback
   $play.on('click', function() {
-    notes.innerHTML = '';
-    $('.pcmsg').html('Playing...');
+    time = 0;
     playerNotes = [];
     pcNotes = [];
+    notes.innerHTML = '';
+    $('.pcmsg').html('Playing...');
     if (currentMode === 'chord') {
       const randChord = Object.keys(mode.chord[currentLevel].notes).length;
       pcNotes = genRandChord(randChord);
@@ -324,6 +337,7 @@ $( () => {
 
   // PC retry/repeat button
   $retry.on('click', function(e) {
+    time = 0;
     notes.innerHTML = '';
     if (!canRetry) {
       e.preventDefault();
