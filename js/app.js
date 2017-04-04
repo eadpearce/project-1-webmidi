@@ -44,7 +44,9 @@ let pcNotes = [];
 let canPlay = false;
 let canRetry = false;
 let useNotation = true;
-let canMove = true;
+let moveMode = true;
+let currentNote = null;
+let playMove = false;
 // let levelScore = 0;
 let score = 0;
 const tempi = {
@@ -98,16 +100,12 @@ $( () => {
   $level.html('Level 1');
   $score.html('Score: '+score);
   $retry.addClass('disabled');
+  if (moveMode) {
+    $retry.addClass('disabled');
+    $play.addClass('disabled');
+  }
 
-  $go.on('click', () => {
-    if (canMove) {
-      canMove = false;
-      const moveInterval = setInterval(moveNote, 1500);
-    } else {
-      canMove = true;
-      clearInterval(moveInterval);
-    }
-  });
+  $go.on('click', moveNote);
 
   // level selector
   $('.level-select').on('change', function() {
@@ -228,11 +226,34 @@ $( () => {
     }
   }
 
+  function moveThis() {
+    // animation
+    $('.manuscript').find('.move').animate({
+      'left': '-=460px'
+    }, {
+      duration: 4000,
+      easing: 'linear',
+      complete: function() {
+        $(this).remove();
+      },
+      step: function( now ) {
+        if (now > -460 && now < -400) {
+          playMove = true;
+          if (this.id === '') {
+            return;
+          }
+          currentNote = this.id.slice(4);
+        }
+      }
+    });
+  }
+
   function moveNote() {
     const newNote = document.createElement('li');
     newNote.classList.add('move');
     newNote.classList.add('note');
     const randNote = Math.floor(Math.random() * 11);
+    newNote.id = 'note'+randNote;
     newNote.classList.add(manuscript[randNote]);
     // add accidentals
     if (randNote === 1 || randNote === 3 || randNote === 6 || randNote === 8 || randNote === 10 ) {
@@ -242,12 +263,7 @@ $( () => {
       accidental.classList.add(manuscript[randNote]+'-flat');
       notes.appendChild(accidental);
       notes.appendChild(newNote);
-      // animation
-      $('.manuscript').find('.move').animate({
-        'left': '-=460px'
-      }, 4000, 'linear', function() {
-        $(this).remove();
-      });
+      moveThis();
       return;
     } else if ( randNote === 0 ) {
       const ledger = document.createElement('li');
@@ -255,22 +271,12 @@ $( () => {
       ledger.classList.add('ledger');
       notes.appendChild(ledger);
       notes.appendChild(newNote);
-      // animation
-      $('.manuscript').find('.move').animate({
-        'left': '-=460px'
-      }, 4000, 'linear', function() {
-        $(this).remove();
-      });
+      moveThis();
       return;
 
     }
     notes.appendChild(newNote);
-    // animation
-    $('.manuscript').find('.move').animate({
-      marginLeft: 0
-    }, 4000, 'linear', function() {
-      $(this).remove();
-    });
+    moveThis();
   }
 
 
@@ -318,27 +324,26 @@ $( () => {
     $audio[note].currentTime=0;
     $audio[note].play();
     // depress the key
-    keyDepress(note);
-    // push the notes to the playerNotes array if canPlay
-    if (canPlay) {
+    if (!moveMode) {
+      keyDepress(note);
+    } else if (moveMode && playMove && note === currentNote) {
+      score = score + (mode[currentMode][currentLevel].score * currentDifficulty * tempi[currentTempo].score);
+    } else if (canPlay) {
       feedback(parseInt(note), time);
       playerNotes.push(parseInt(note));
       time++;
       if (time===pcNotes.length) {
         time = 0;
         // check if match
-        if (currentMode === 'chord') {
-          if (checkMatchChord()) {
-            canPlay = false;
-          }
-        } else if (currentMode === 'seq') {
-          if (checkMatch()) {
-            canPlay = false;
-          }
+        if (currentMode === 'chord' && checkMatchChord()) {
+          canPlay = false;
         }
+      } else if (currentMode === 'seq' && checkMatch()) {
+        canPlay = false;
       }
     }
   }
+
 
   // computer keyboard playback
   $(document).keydown( function(e) {
