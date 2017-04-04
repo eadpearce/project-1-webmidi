@@ -194,6 +194,17 @@ ul.black-label {
   font-size: 20px;
   content: '\25bd';
 }
+.playpos-top.active:before {
+  font-size: 20px;
+  color: #83bbdf;
+  content: '\25bc';
+}
+.playpos-top.active.pos-wrong:before {
+  color: red;
+}
+.playpos-bottom.active.pos-wrong:before {
+  color: red;
+}
 .playpos-bottom {
   position: absolute;
   top: 200px;
@@ -202,6 +213,11 @@ ul.black-label {
 .playpos-bottom:before {
   font-size: 20px;
   content: '\25b3';
+}
+.playpos-bottom.active:before {
+  font-size: 20px;
+  color: #83bbdf;
+  content: '\25b2';
 }
 .clef {
   position: absolute;
@@ -242,6 +258,12 @@ ul.black-label {
 }
 .flat.move {
   margin-left: 450px;
+}
+.note-correct {
+  color:#83bbdf;
+}
+.note-wrong {
+  color: red;
 }
 .b {
   padding-top: 1px;

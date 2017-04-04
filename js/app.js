@@ -47,6 +47,9 @@ let useNotation = true;
 let moveMode = true;
 let currentNote = null;
 let playMove = false;
+let levelLength = 10;
+let noteNumber = 0;
+let moveTimer;
 // let levelScore = 0;
 let score = 0;
 const tempi = {
@@ -55,6 +58,14 @@ const tempi = {
   fast: { tempo: 250, score: 1 },
   vfast: { tempo: 125, score: 1 }
 };
+
+// generate a random phrase
+function genRandMove() {
+  // copy currentLevel.notes to availNotes
+  const availNotes = mode[currentMode][currentLevel].notes;
+  const randIndex = Math.floor(Math.random() * availNotes.length);
+  return mode[currentMode][currentLevel].notes[randIndex];
+}
 
 // generate a random phrase
 function genRand(length) {
@@ -179,11 +190,6 @@ $( () => {
     $score.html('Score: '+score);
     $winmsg.html('Correct!');
     $('.pcmsg').html('');
-    // // progress to next level at 5 wins
-    // if (levelScore%5 === 0) {
-    //   currentLevel++;
-    //   $level.html('Level '+currentLevel);
-    // }
   }
 
   function keyDepress(note) {
@@ -238,6 +244,7 @@ $( () => {
       },
       step: function( now ) {
         if (now > -460 && now < -400) {
+          this.classList.add('current');
           playMove = true;
           if (this.id === '') {
             return;
@@ -249,36 +256,77 @@ $( () => {
   }
 
   function moveNote() {
-    const newNote = document.createElement('li');
-    newNote.classList.add('move');
-    newNote.classList.add('note');
-    const randNote = Math.floor(Math.random() * 11);
-    newNote.id = 'note'+randNote;
-    newNote.classList.add(manuscript[randNote]);
-    // add accidentals
-    if (randNote === 1 || randNote === 3 || randNote === 6 || randNote === 8 || randNote === 10 ) {
-      const accidental = document.createElement('li');
-      accidental.classList.add('move');
-      accidental.classList.add('flat');
-      accidental.classList.add(manuscript[randNote]+'-flat');
-      notes.appendChild(accidental);
+    noteNumber = 0;
+    moveTimer = setInterval( () => {
+      noteNumber++;
+      const newNote = document.createElement('li');
+      newNote.classList.add('move');
+      newNote.classList.add('note');
+      const randNote = genRandMove();
+      newNote.id = 'note'+randNote;
+      newNote.classList.add(manuscript[randNote]);
+      // add accidentals
+      if (randNote === 1 || randNote === 3 || randNote === 6 || randNote === 8 || randNote === 10 ) {
+        const accidental = document.createElement('li');
+        accidental.classList.add('move');
+        accidental.classList.add('flat');
+        accidental.classList.add(manuscript[randNote]+'-flat');
+        notes.appendChild(accidental);
+        notes.appendChild(newNote);
+        moveThis();
+        return;
+      } else if ( randNote === 0 ) {
+        const ledger = document.createElement('li');
+        ledger.classList.add('move');
+        ledger.classList.add('ledger');
+        notes.appendChild(ledger);
+        notes.appendChild(newNote);
+        moveThis();
+        return;
+      }
       notes.appendChild(newNote);
       moveThis();
-      return;
-    } else if ( randNote === 0 ) {
-      const ledger = document.createElement('li');
-      ledger.classList.add('move');
-      ledger.classList.add('ledger');
-      notes.appendChild(ledger);
-      notes.appendChild(newNote);
-      moveThis();
-      return;
-
-    }
-    notes.appendChild(newNote);
-    moveThis();
+      if (noteNumber >= levelLength) {
+        clearInterval(moveTimer);
+      }
+    }, tempi[currentTempo]['tempo']);
   }
 
+
+  function winMove() {
+    score = score + (mode[currentMode][currentLevel].score * currentDifficulty * tempi[currentTempo].score);
+    $score.html('Score: '+score);
+    $('.current').addClass('note-correct');
+    setTimeout( () => {
+      $('.current').removeClass('note-correct');
+    }, 250);
+    $('.playpos-top').addClass('active');
+    setTimeout( () => {
+      $('.playpos-top').removeClass('active');
+    }, 250);
+    $('.playpos-bottom').addClass('active');
+    setTimeout( () => {
+      $('.playpos-bottom').removeClass('active');
+    }, 250);
+  }
+  function loseMove() {
+    if (score !== 0) {
+      score = score - (mode[currentMode][currentLevel].score * currentDifficulty * tempi[currentTempo].score);
+    }
+    $score.html('Score: '+score);
+    $('.current').addClass('note-wrong');
+    setTimeout( () => {
+      $('.current').removeClass('note-wrong');
+    }, 250);
+    $('.playpos-top').addClass('active pos-wrong');
+    setTimeout( () => {
+      $('.playpos-top').removeClass('active pos-wrong');
+    }, 250);
+    $('.playpos-bottom').addClass('active pos-wrong');
+    setTimeout( () => {
+      $('.playpos-bottom').removeClass('active pos-wrong');
+    }, 250);
+  }
 
   function pcPlayback() {
     const timer = setInterval( () => {
@@ -324,10 +372,14 @@ $( () => {
     $audio[note].currentTime=0;
     $audio[note].play();
     // depress the key
-    if (!moveMode) {
-      keyDepress(note);
-    } else if (moveMode && playMove && note === currentNote) {
-      score = score + (mode[currentMode][currentLevel].score * currentDifficulty * tempi[currentTempo].score);
+    keyDepress(note);
+    if (moveMode && playMove) {
+      // ignore the stupid linter here
+      if (note == currentNote) {
+        winMove();
+      } else {
+        loseMove();
+      }
     } else if (canPlay) {
       feedback(parseInt(note), time);
       playerNotes.push(parseInt(note));
