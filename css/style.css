@@ -1,6 +1,4 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box }
 body {
   background: white;
   font-family: 'Cardo', serif;
@@ -10,9 +8,7 @@ main {
   width: 530px;
   margin: 0 auto;
 }
-.title {
-  height: 120px;
-}
+.title { height: 120px }
 .container {
   background-color: #eee;
   height: 450px;
@@ -22,11 +18,9 @@ main {
 }
 .left-content {
   float: left;
-    width: 308px;
+  width: 308px;
 }
-.right-content {
-  float: right;
-}
+.right-content { float: right }
 .keyboard {
   height: 260px;
   float: left;
@@ -52,9 +46,7 @@ label {
   font-weight: bold;
   line-height: 1.3em;
 }
-form {
-  height: 270px;
-}
+form { height: 270px }
 .notif {
   margin: 15px 0;
   padding: 0 10px;
@@ -62,12 +54,8 @@ form {
   font-size: 20px;
   clear: both;
 }
-.notif:after {
-  content: '\00a0';
-}
-.pre {
-  font-size: 20px;
-}
+.notif:after { content: '\00a0' }
+.pre { font-size: 20px }
 h1 {
   text-align: center;
   padding: 20px 0;
@@ -88,24 +76,18 @@ h1 {
   width: 80px;
   float: right;
 }
-.options:hover {
-  background: #ddd;
-}
+.options:hover { background: #ddd }
 .disabled {
   background: darkgrey;
   color: grey;
   border-color: grey;
 }
-.disabled:hover {
-  background: darkgrey;
-}
+.disabled:hover { background: darkgrey }
 .black-keys {
   margin-left: 27px;
   position: absolute;
 }
-li.black:nth-child(3) {
-  margin-left: 42px;
-}
+li.black:nth-child(3) { margin-left: 42px }
 .keys {
   border: 2px solid black;
   border-radius: 3px;
@@ -123,21 +105,15 @@ li.black:nth-child(3) {
   float: left;
   margin: 0 1px;
 }
-.black-keys li {
-  float: left;
-}
-ul.black-label {
-  margin-left: 22px;
-}
+.black-keys li { float: left }
+ul.black-label { margin-left: 22px }
 .black-label li {
   display: inline-block;
   margin-bottom: 3px;
   width: 40px;
   text-align: center;
 }
-.black-label li:nth-child(3) {
-  margin-left: 37px;
-}
+.black-label li:nth-child(3) { margin-left: 37px }
 .white {
   background: white;
   transition: 0.2s ease;
@@ -149,12 +125,8 @@ ul.black-label {
   height: 110px;
   transition: 0.2s ease;
 }
-.white:hover {
-  background: #ddd;
-}
-.black:hover {
-  background: #555;
-}
+.white:hover { background: #ddd }
+.black:hover { background: #555 }
 /* ignore the linter. don't separate these or it won't work */
 .white.depress {
   background: #83bbdf;
@@ -164,12 +136,8 @@ ul.black-label {
   background: #83bbdf;
   transition: 0.1s ease;
 }
-.wrong {
-  border-color: red;
-}
-.correct {
-  border-color: white;
-}
+.wrong { border-color: red }
+.correct { border-color: white }
 .manuscript {
   height: 120px;
   width: 100%;
@@ -179,12 +147,8 @@ ul.black-label {
   border-bottom: 2px solid black;
   width: 100%;
 }
-.line1 {
-  padding-top: 16px;
-}
-.pos {
-  background:grey;
-}
+.line1 { padding-top: 16px }
+.pos { background:grey }
 .playpos-top {
   position: absolute;
   top: 106px;
@@ -199,12 +163,8 @@ ul.black-label {
   color: #83bbdf;
   content: '\25bc';
 }
-.playpos-top.active.pos-wrong:before {
-  color: red;
-}
-.playpos-bottom.active.pos-wrong:before {
-  color: red;
-}
+.playpos-top.active.pos-wrong:before { color: red }
+.playpos-bottom.active.pos-wrong:before { color: red }
 .playpos-bottom {
   position: absolute;
   top: 200px;
@@ -224,12 +184,8 @@ ul.black-label {
   font-size: 100px;
   top: 106px;
 }
-.clef:before {
-  content: '\1d11e'
-}
-.lines:after {
-  content: '\00a0'
-}
+.clef:before { content: '\1d11e' }
+.lines:after { content: '\00a0' }
 .notes {
   margin-left: 30px;
   position: absolute;
@@ -241,74 +197,36 @@ ul.black-label {
   float: left;
   letter-spacing: -15px;
 }
-.note {
-  margin-right: 5px;
-}
-.note:after {
-  content: '\2669'
-}
+.note { margin-right: 5px }
+.note:after { content: '\2669' }
 .move {
   margin-left: 460px;
   position: absolute;
   clear: left;
   letter-spacing: 40px;
 }
-.ledger.move {
-  margin-left: 469px;
-}
-.flat.move {
-  margin-left: 450px;
-}
-.note-correct {
-  color:#83bbdf;
-}
-.note-wrong {
-  color: red;
-}
-.b {
-  padding-top: 1px;
-}
+.ledger.move { margin-left: 469px }
+.flat.move { margin-left: 450px }
+.note-correct { color:#83bbdf }
+.note-wrong { color: red }
 .flat:before {
   content: '\266d';
   font-size: 28px;
 }
-.b-flat {
-  padding-top: 5px;
-}
-.a {
-  padding-top: 6px;
-}
-.a-flat {
-  padding-top: 10px;
-}
-.g {
-  padding-top: 10px;
-}
-.g-flat {
-  padding-top: 14px;
-}
-.f {
-  padding-top: 15px;
-}
-.e {
-  padding-top: 21px;
-}
-.e-flat {
-  padding-top: 25px;
-}
-.d {
-  padding-top: 26px;
-}
-.d-flat {
-  padding-top: 30px;
-}
-.c {
-  padding-top: 30px;
-}
+.b {      padding-top: 1px }
+.b-flat { padding-top: 5px  }
+.a {      padding-top: 6px  }
+.a-flat { padding-top: 10px }
+.g {      padding-top: 10px }
+.g-flat { padding-top: 14px }
+.f {      padding-top: 15px }
+.e {      padding-top: 21px }
+.e-flat { padding-top: 25px }
+.d {      padding-top: 26px }
+.d-flat { padding-top: 30px }
+.c {      padding-top: 30px }
 .ledger {
   margin-left: -29px;
   padding-top: 21px;
 }
-.ledger:after {
-  content: '_'
-}
+.ledger:after { content: '_' }

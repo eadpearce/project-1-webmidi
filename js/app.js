@@ -50,21 +50,34 @@ game.currentTempo = 'slow';
 // score weighting for difficulty - 1 is easy 2 is hard
 game.currentDifficulty = 1;
 // time to keep track of notes played
-game.time = 0;
+// game.playTime = 0;
+// arrays to check for matching notes
 game.playerNotes = [];
 game.pcNotes = [];
-game.canPlay = false;
+// enables key feedback on playing
+game.checkNotes = false;
 game.canRetry = false;
+// turn notation on/off
 game.useNotation = true;
 game.moveMode = true;
+// stores value of note at play point
 game.currentNote = null;
 game.playMove = false;
-game.canMove = true;
+// stops go button being triggered more than once
+game.isMoving = false;
+// length of each string of notes in move mode
 game.levelLength = 10;
+// note number in phrase - used in all modes
 game.noteNumber = 0;
+// for the move mode setInterval
 game.moveTimer;
-// let levelScore = 0;
+// score starts at 0
 game.score = 0;
+
+// need to condense random generator into one function
+// game.genRand = function() {
+//
+// };
 
 // generate a random phrase
 game.genRandMove = function() {
@@ -90,7 +103,6 @@ game.genRand = function(length) {
 
 game.genRandChord = function(size) {
   const randKey = Math.floor(Math.random() * size+1);
-  console.log(game[game.currentMode][game.currentLevel].notes[randKey]);
   return game[game.currentMode][game.currentLevel].notes[randKey];
 };
 
@@ -112,7 +124,7 @@ $( () => {
   const $winmsg = $('.winmsg');
   const $score = $('.score');
   const $level = $('.current-level');
-  const notes = document.querySelector('.notes');
+  game.notes = document.querySelector('.notes');
   $level.html('Level 1');
   $score.html('Score: '+game.score);
   $retry.addClass('disabled');
@@ -121,7 +133,30 @@ $( () => {
     $play.addClass('disabled');
   }
 
-  game.$go.on('click', moveNote);
+  game.createNotes = function(element, type, noteID) {
+    element.classList.add('move');
+    switch (type) {
+      case 'note':
+        element.classList.add('note');
+        element.id = 'note'+noteID;
+        element.classList.add(game.manuscript[noteID]);
+        game.notes.appendChild(element);
+        break;
+      case 'flat':
+        element.classList.add('flat');
+        element.classList.add(game.manuscript[noteID]+'-flat');
+        game.notes.appendChild(element);
+        break;
+      case 'ledger':
+        element.classList.add('ledger');
+        game.notes.appendChild(element);
+        break;
+      default:
+    }
+  };
+
+
+  game.$go.on('click', game.moveNote);
 
   // level selector
   $('.level-select').on('change', function() {
@@ -160,7 +195,7 @@ $( () => {
       if (game.pcNotes[i] !== game.playerNotes[i]) {
         game.playerNotes = [];
         game.canRetry = true;
-        game.canPlay = false;
+        game.checkNotes = false;
         $winmsg.html('Try again...');
         setTimeout( () => {
           $winmsg.html('');
@@ -229,16 +264,16 @@ $( () => {
       const accidental = document.createElement('li');
       accidental.classList.add('flat');
       accidental.classList.add(game.manuscript[playedNote]+'-flat');
-      notes.appendChild(accidental);
+      game.notes.appendChild(accidental);
     }
     const note = document.createElement('li');
     note.classList.add('note');
     note.classList.add(game.manuscript[playedNote]);
-    notes.appendChild(note);
+    game.notes.appendChild(note);
     if (playedNote === 0) {
       const ledger = document.createElement('li');
       ledger.classList.add('ledger');
-      notes.appendChild(ledger);
+      game.notes.appendChild(ledger);
     }
   };
 
@@ -268,48 +303,43 @@ $( () => {
     });
   };
 
-  function moveNote() {
+  game.moveNote = function() {
     // disable button if already running
-    if (!game.canMove) {
+    if (game.isMoving) {
       return;
     }
+
     game.noteNumber = 0;
-    game.canMove = false;
+    game.isMoving = true;
+
     game.moveTimer = setInterval( () => {
       game.noteNumber++;
+
       const newNote = document.createElement('li');
-      newNote.classList.add('move');
-      newNote.classList.add('note');
       const randNote = game.genRandMove();
-      newNote.id = 'note'+randNote;
-      newNote.classList.add(game.manuscript[randNote]);
       // add accidentals
       if (randNote === 1 || randNote === 3 || randNote === 6 || randNote === 8 || randNote === 10 ) {
         const accidental = document.createElement('li');
-        accidental.classList.add('move');
-        accidental.classList.add('flat');
-        accidental.classList.add(game.manuscript[randNote]+'-flat');
-        notes.appendChild(accidental);
-        notes.appendChild(newNote);
+        game.createNotes(newNote, 'note', randNote);
+        game.createNotes(accidental, 'flat', randNote);
         game.moveThis();
         return;
       } else if ( randNote === 0 ) {
         const ledger = document.createElement('li');
-        ledger.classList.add('move');
-        ledger.classList.add('ledger');
-        notes.appendChild(ledger);
-        notes.appendChild(newNote);
+        game.createNotes(newNote, 'note', randNote);
+        game.createNotes(ledger, 'ledger', randNote);
         game.moveThis();
         return;
       }
-      notes.appendChild(newNote);
+      game.createNotes(newNote, 'note', randNote);
       game.moveThis();
       if (game.noteNumber >= game.levelLength) {
         clearInterval(game.moveTimer);
-        game.canMove = true;
+        game.isMoving = false;
       }
     }, game.tempi[game.currentTempo]['tempo']);
-  }
+
+  };
 
 
   game.winMove = function() {
@@ -349,7 +379,7 @@ $( () => {
 
   game.pcPlayback = function() {
     const timer = setInterval( () => {
-      const thisNote = game.pcNotes[game.time];
+      const thisNote = game.pcNotes[game.noteNumber];
       if (game.currentDifficulty === 1) {
         game.keyDepress(thisNote);
       }
@@ -357,11 +387,11 @@ $( () => {
       if (game.useNotation) {
         game.updateManuscript(thisNote);
       }
-      game.time++;
-      if (game.time === game.pcNotes.length) {
+      game.noteNumber++;
+      if (game.noteNumber === game.pcNotes.length) {
         clearInterval(timer);
-        game.time = 0;
-        game.canPlay = true;
+        game.noteNumber = 0;
+        game.checkNotes = true;
         game.canRetry = true;
         $retry.removeClass('disabled');
         $('.pcmsg').html('Your turn');
@@ -377,7 +407,7 @@ $( () => {
       }
       game.playAudio(thisNote);
     }
-    game.canPlay = true;
+    game.checkNotes = true;
     game.canRetry = true;
     $retry.removeClass('disabled');
     $('.pcmsg').html('Your turn');
@@ -395,18 +425,18 @@ $( () => {
       } else {
         game.loseMove();
       }
-    } else if (game.canPlay) {
-      game.feedback(parseInt(note), game.time);
+    } else if (game.checkNotes) {
+      game.feedback(parseInt(note), game.noteNumber);
       game.playerNotes.push(parseInt(note));
-      game.time++;
-      if (game.time===game.pcNotes.length) {
-        game.time = 0;
+      game.noteNumber++;
+      if (game.noteNumber===game.pcNotes.length) {
+        game.noteNumber = 0;
         // check if match
         if (game.currentMode === 'chord' && checkMatchChord()) {
-          game.canPlay = false;
+          game.checkNotes = false;
         }
       } else if (game.currentMode === 'seq' && checkMatch()) {
-        game.canPlay = false;
+        game.checkNotes = false;
       }
     }
   };
@@ -429,7 +459,7 @@ $( () => {
 
   // PC phrase playback
   $play.on('click', function() {
-    game.time = 0;
+    game.noteNumber = 0;
     game.playerNotes = [];
     game.pcNotes = [];
     notes.innerHTML = '';
@@ -446,7 +476,7 @@ $( () => {
 
   // PC retry/repeat button
   $retry.on('click', function(e) {
-    game.time = 0;
+    game.noteNumber = 0;
     notes.innerHTML = '';
     if (!game.canRetry) {
       e.preventDefault();
