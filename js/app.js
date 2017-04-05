@@ -14,13 +14,13 @@ var game = game || {};
 game.keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
 game.manuscript = { 0: 'c', 1: 'd', 2: 'd', 3: 'e', 4: 'e', 5: 'f', 6: 'g', 7: 'g', 8: 'a', 9: 'a', 10: 'b', 11: 'b' };
 game.seq = {
-  1: { length: 3, notes: [0,2,4], phraseLength: 3, score: 1},
-  2: { length: 4, notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
-  3: { length: 5, notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
-  4: { length: 6, notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
-  5: { length: 7, notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
-  6: { length: 8, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
-  7: { length: 10, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
+  1: { length: 3, score: 1, notes: [0,2,4], phraseLength: 3},
+  2: { length: 4, score: 2, notes: [0,2,4,5,7], phraseLength: 4 },
+  3: { length: 5, score: 3, notes: [0,2,4,5,7,9,11], phraseLength: 4 },
+  4: { length: 6, score: 4, notes: [0,2,4,5,7,9,11], phraseLength: 5 },
+  5: { length: 7, score: 5, notes: [0,1,2,3,4,5,6,7], phraseLength: 5 },
+  6: { length: 8, score: 6, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5 },
+  7: { length: 10, score: 7, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7 }
 };
 game.move = {
   1: { length: 3, notes: game.seq[1].notes, score: 1},
@@ -76,7 +76,7 @@ game.playMove = false;
 // stops go button being triggered more than once
 game.isMoving = false;
 // length of each string of notes in move mode
-game.levelLength = 5;
+game.levelLength = 50;
 game.showCompleteMsg = false;
 // note number in phrase - used in all modes
 game.noteNumber = 0;
@@ -243,6 +243,10 @@ game.start = function() {
       const randNoteID = game.genRand('move');
       game.addNotes(true, randNoteID);
       if (game.noteNumber >= game.levelLength) {
+        setTimeout( () => {
+          game.$play.html('Play');
+          game.$play.removeClass('wrong');
+        }, 4000);
         clearInterval(game.moveTimer);
         game.isMoving = false;
         // reset currentNote when the notes have gone
@@ -289,13 +293,7 @@ game.start = function() {
     message.innerHTML = 'stage complete!';
     const main = document.querySelector('main');
     main.appendChild(message);
-    $('main').find('.complete').animate({ 'marginLeft': '0' }, { duration: 1000
-      // complete: function() {
-      //   setTimeout( () => {
-      //     $(this).remove();
-      //   }, 750);
-      // }
-    });
+    $('main').find('.complete').animate({ 'marginLeft': '0' }, { duration: 1000 });
   };
 
 
@@ -309,12 +307,12 @@ game.start = function() {
         clearInterval(game.moveTimer);
         setTimeout( () => {
           game.stageComplete();
-          game.currentTempo++;
-          game.currentLevel = 1;
-          console.log('complete');
           game.$play.html('Play');
           game.$play.removeClass('wrong');
-        }, 4000);
+          game.currentStage++;
+          game.currentLevel = 1;
+          console.log('complete');
+        }, 3500);
         return;
       }
       game.levelScore = 0;
