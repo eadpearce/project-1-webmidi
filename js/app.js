@@ -156,7 +156,41 @@ $( () => {
   };
 
 
-  game.$go.on('click', game.moveNote);
+  game.$go.on('click', function() {
+    // disable button if already running
+    if (game.isMoving) {
+      return;
+    }
+    game.noteNumber = 0;
+    game.isMoving = true;
+
+    game.moveTimer = setInterval( () => {
+      game.noteNumber++;
+      const newNote = document.createElement('li');
+      const randNote = game.genRandMove();
+      // add accidentals
+      if (randNote === 1 || randNote === 3 || randNote === 6 || randNote === 8 || randNote === 10 ) {
+        const accidental = document.createElement('li');
+        game.createNotes(newNote, 'note', randNote);
+        game.createNotes(accidental, 'flat', randNote);
+        game.moveThis();
+        return;
+      } else if ( randNote === 0 ) {
+        const ledger = document.createElement('li');
+        game.createNotes(newNote, 'note', randNote);
+        game.createNotes(ledger, 'ledger', randNote);
+        game.moveThis();
+        return;
+      }
+      game.createNotes(newNote, 'note', randNote);
+      game.moveThis();
+      if (game.noteNumber >= game.levelLength) {
+        clearInterval(game.moveTimer);
+        game.isMoving = false;
+      }
+    }, game.tempi[game.currentTempo]['tempo']);
+
+  });
 
   // level selector
   $('.level-select').on('change', function() {
@@ -303,45 +337,6 @@ $( () => {
     });
   };
 
-  game.moveNote = function() {
-    // disable button if already running
-    if (game.isMoving) {
-      return;
-    }
-
-    game.noteNumber = 0;
-    game.isMoving = true;
-
-    game.moveTimer = setInterval( () => {
-      game.noteNumber++;
-
-      const newNote = document.createElement('li');
-      const randNote = game.genRandMove();
-      // add accidentals
-      if (randNote === 1 || randNote === 3 || randNote === 6 || randNote === 8 || randNote === 10 ) {
-        const accidental = document.createElement('li');
-        game.createNotes(newNote, 'note', randNote);
-        game.createNotes(accidental, 'flat', randNote);
-        game.moveThis();
-        return;
-      } else if ( randNote === 0 ) {
-        const ledger = document.createElement('li');
-        game.createNotes(newNote, 'note', randNote);
-        game.createNotes(ledger, 'ledger', randNote);
-        game.moveThis();
-        return;
-      }
-      game.createNotes(newNote, 'note', randNote);
-      game.moveThis();
-      if (game.noteNumber >= game.levelLength) {
-        clearInterval(game.moveTimer);
-        game.isMoving = false;
-      }
-    }, game.tempi[game.currentTempo]['tempo']);
-
-  };
-
-
   game.winMove = function() {
     game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
     $score.html('Score: '+game.score);
@@ -358,6 +353,7 @@ $( () => {
       $('.playpos-bottom').removeClass('active');
     }, 250);
   };
+
   game.loseMove = function() {
     if (game.score !== 0) {
       game.score = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
