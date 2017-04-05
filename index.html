@@ -14,6 +14,7 @@
 <body>
   <main>
     <div class="title"><h1><span class="pre">Learn to play by ear and sight-read or: </span><br>Piano Hero</h1></div>
+    <!-- <div class="complete">stage complete!</div> -->
     <div class="manuscript">
       <ul class="notes">
       </ul>
@@ -27,6 +28,10 @@
       <div class="lines"></div>
       <div class="lines"></div>
     </div>
+    <p class="notif score"></p>
+    <p class="notif current-level"></p>
+    <p class="notif pcmsg"></p>
+    <p class="notif winmsg"></p>
     <div class="container">
       <div class="left-content">
         <div class="keyboard">
@@ -71,11 +76,10 @@
       </div>
       <div class="right-content">
         <div class="controls">
-          <button class="options play">Play</button>
-          <button class="options go">Go</button>
-          <button class="options retry">Retry (-1 point)</button>
+          <!-- <button class="options play">Play</button>
+          <button class="options retry">Retry (-1 point)</button> -->
           <form>
-            <label class="level">Select level:</label><br>
+            <!-- <label class="level">Select level:</label><br>
             <select name="level" class="options level-select">
             <option value="level1" selected>Level 1</option>
             <option value="level2">Level 2</option>
@@ -84,19 +88,21 @@
             <option value="level5">Level 5</option>
             <option value="level6">Level 6</option>
             <option value="level7">Level 7</option>
-          </select>
-          <label class="tempo">Tempo:</label><br>
+          </select> -->
+          <!-- <label class="tempo">Tempo:</label><br>
           <select name="level" class="options tempo-select">
             <option value="vslow">Very slow</option>
             <option value="slow" selected>Slow</option>
             <option value="med">Medium</option>
             <option value="fast">Fast</option>
             <option value="vfast">Very fast</option>
-          </select>
+          </select> -->
           <label class="mode">Mode:</label><br>
           <select name="mode" class="options mode-select">
-            <option value="seq" selected>Sequence</option>
-            <option value="chord">Chord</option>
+            <option value="seq" selected>Repeat the phrase</option>
+            <option value="move">Piano Hero</option>
+            <!-- <option value="seq" selected>Sequence</option>
+            <option value="chord">Chord</option> -->
           </select>
           <div class="diff">
             <label for="difficulty">Difficulty:</label><br>
@@ -109,10 +115,6 @@
             <input class="notation" type="radio" name="notation" value="off">Off<br>
           </div>
         </form>
-        <p class="notif winmsg"></p>
-        <p class="notif pcmsg"></p>
-        <p class="notif current-level"></p>
-        <p class="notif score"></p>
       </div>
     </div>
   </div>

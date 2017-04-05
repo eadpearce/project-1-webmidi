@@ -1,52 +1,62 @@
 // piano samples edited from those provided here http://theremin.music.uiowa.edu/MISpiano.html
 
-// all notes = [0,1,2,3,4,5,6,7,8,9,10,11];
-// black notes = [1,3,6,8,10];
-// white notes = [0,2,4,5,7,9,11];
+// all notes      0,1,2,3,4,5,6,7,8,9,10,11];
+// black notes      1,  3,    6,  8,  10];
+// white notes    0,  2,  4,5,  7,  9,  11];
 
 // note mapping
-// C, C#, D, Eb, E, F, F#, G, G#, A, Bb,  B
-// 0, 1,  2, 3,  4, 5, 6,  7, 8,  9, 10, 11
+// C,  C#, D,  Eb, E,  F, F#, G,  G#, A,  Bb,  B
+// 0,  1,  2,  3,  4,  5, 6,  7,  8,  9,  10, 11
 
 var game = game || {};
 
 // index corresponds to note ID
 game.keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
+game.manuscript = { 0: 'c', 1: 'd', 2: 'd', 3: 'e', 4: 'e', 5: 'f', 6: 'g', 7: 'g', 8: 'a', 9: 'a', 10: 'b', 11: 'b' };
 game.seq = {
-  1: { notes: [0,2,4], phraseLength: 3, score: 1},
-  2: { notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
-  3: { notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
-  4: { notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
-  5: { notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
-  6: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
-  7: { notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
+  1: { length: 3, notes: [0,2,4], phraseLength: 3, score: 1},
+  2: { length: 4, notes: [0,2,4,5,7], phraseLength: 4, score: 2 },
+  3: { length: 5, notes: [0,2,4,5,7,9,11], phraseLength: 4, score: 3 },
+  4: { length: 6, notes: [0,2,4,5,7,9,11], phraseLength: 5, score: 4 },
+  5: { length: 7, notes: [0,1,2,3,4,5,6,7], phraseLength: 5, score: 5 },
+  6: { length: 8, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5, score: 6 },
+  7: { length: 10, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7, score: 7 }
+};
+game.move = {
+  1: { length: 3, notes: game.seq[1].notes, score: 1},
+  2: { length: 4, notes: game.seq[2].notes, score: 2 },
+  3: { length: 5, notes: game.seq[3].notes, score: 3 },
+  4: { length: 6, notes: game.seq[4].notes, score: 4 },
+  5: { length: 7, notes: game.seq[5].notes, score: 5 },
+  6: { length: 8, notes: game.seq[6].notes, score: 6 },
+  7: { length: 10, notes: game.seq[7].notes, score: 7 }
 };
 game.chord = {
-  1: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9] }, score: 1},
-  2: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11] }, score: 2},
-  3: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10] }, score: 3},
-  4: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9] }, score: 4},
-  5: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [3,8,11] }, score: 5},
-  6: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [3,6,11], 13: [2,6,11] }, score: 6},
-  7: { notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [11,3,6], 13: [2,6,11], 14: [0,3,6,8], 15: [2,5,8] }, score: 7}
+  1: { score: 1, length: 3, notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9] }},
+  2: { score: 2, length: 4, notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11] }},
+  3: { score: 3, length: 5, notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10] }},
+  4: { score: 4, length: 6, notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9] }},
+  5: { score: 5, length: 7, notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [3,8,11] }},
+  6: { score: 6, length: 8, notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [3,6,11], 13: [2,6,11] }},
+  7: { score: 7, length: 10, notes: { 1: [0,4,7], 2: [2,6,9], 3: [0,5,9], 4: [4,7,11], 5: [2,7,11], 6: [1,5,8], 7: [3,6,10], 8: [0,3,7], 9: [2,5,9], 10: [1,5,8], 11: [8,11,3], 12: [11,3,6], 13: [2,6,11], 14: [0,3,6,8], 15: [2,5,8] }}
 };
-game.manuscript = { 0: 'c', 1: 'd', 2: 'd', 3: 'e', 4: 'e', 5: 'f', 6: 'g', 7: 'g', 8: 'a', 9: 'a', 10: 'b', 11: 'b' };
 // 60bpm = 1bps = 1000/1 = 1000ms interval
 // 120bpm = 2bps = 1000/2 = 500ms interval
 // 140bpm = 2.33bps = 1000/2.33 = ~428.57ms interval
 // 180bpm = 3bps = 1000/3 = 333.33ms interval
 // 90bpm = 1.5bps = 1000/1.5 = 666.66ms interval
-game.tempi = {
-  vslow: { tempo: 1000, score: 1 }, // 60bpm
-  slow: { tempo: 666.66, score: 2 }, // 60bpm
-  med: { tempo: 500, score: 3 }, // 90bpm
-  fast: { tempo: 428.57, score: 4 }, // 120bpm
-  vfast: { tempo: 333.33, score: 5 } // 140bpm
+// use this for different stages now
+game.stage = {
+  1: { tempo: 1000, score: 1 }, // 60bpm
+  2: { tempo: 666.66, score: 2 }, // 60bpm
+  3: { tempo: 500, score: 3 }, // 90bpm
+  4: { tempo: 428.57, score: 4 }, // 120bpm
+  5: { tempo: 333.33, score: 5 } // 140bpm
 };
 // start at level1 by default
 game.currentLevel = 1;
-game.currentMode = 'seq';
-game.currentTempo = 'slow';
+game.currentMode = 'seq'; // seq chord or move
+game.currentStage = 1;
 // score weighting for difficulty - 1 is easy 2 is hard
 game.currentDifficulty = 1;
 // time to keep track of notes played
@@ -59,20 +69,22 @@ game.isCheckingNotes = false;
 game.canRetry = false;
 // turn notation on/off
 game.useNotation = true;
-game.moveMode = true;
+// game.moveMode = true;
 // stores value of note at play point
 game.currentNote = null;
 game.playMove = false;
 // stops go button being triggered more than once
 game.isMoving = false;
 // length of each string of notes in move mode
-game.levelLength = 10;
+game.levelLength = 5;
+game.showCompleteMsg = false;
 // note number in phrase - used in all modes
 game.noteNumber = 0;
 // for the move mode setInterval
 game.moveTimer;
 // score starts at 0
 game.score = 0;
+game.levelScore = 0;
 
 // condensed random generator into one function
 game.genRand = function(type, length) {
@@ -97,7 +109,7 @@ game.genRand = function(type, length) {
   }
 };
 
-$( () => {
+game.start = function() {
   // set up audio tags and src FIRST
   game.container = document.querySelector('.container');
   for (let i = 0; i < 12; i++) {
@@ -106,6 +118,17 @@ $( () => {
     audios.src = 'sounds/audio'+i+'.ogg';
     game.container.appendChild(audios);
   }
+  // make the controls
+  const controls = document.querySelector('.controls');
+  const playButt = document.createElement('button');
+  playButt.classList.add('options', 'play');
+  playButt.innerHTML = 'Play';
+  controls.appendChild(playButt);
+  const retryButt = document.createElement('button');
+  retryButt.classList.add('options', 'retry');
+  retryButt.innerHTML = 'Retry';
+  controls.appendChild(retryButt);
+
 
   game.$audio = $('audio');
   game.$play = $('.play');
@@ -113,8 +136,9 @@ $( () => {
   game.$retry = $('.retry');
   game.$keys = $('.keys');
   game.$winmsg = $('.winmsg');
+  game.$pcmsg = $('.pcmsg');
   game.$score = $('.score');
-  game.$level = $('.current-level');
+  game.$stage = $('.current-stage');
   game.$levelSelect = $('.level-select');
   game.$tempoSelect = $('.tempo-select');
   game.$modeSelect = $('.mode-select');
@@ -122,10 +146,10 @@ $( () => {
   game.$notation = $('.notation');
   game.notes = document.querySelector('.notes');
   // initialise controls
-  game.$level.html('Level 1');
+  game.$stage.html('Stage 1');
   game.$score.html('Score: '+game.score);
   game.$retry.addClass('disabled');
-  if (game.moveMode) {
+  if (game.currentMode === 'move') {
     game.$retry.addClass('disabled');
     game.$play.addClass('disabled');
   }
@@ -175,15 +199,15 @@ $( () => {
     });
   };
 
-  // level selector
-  game.$levelSelect.on('change', function() {
-    game.currentLevel = parseInt(this.value.slice(5));
-    game.$level.html('Level '+this.value.slice(5));
-  });
-  // tempo selector
-  game.$tempoSelect.on('change', function(e) {
-    game.currentTempo = e.target.value;
-  });
+  // // level selector
+  // game.$levelSelect.on('change', function() {
+  //   game.currentLevel = parseInt(this.value.slice(5));
+  //   game.$level.html('Level '+this.value.slice(5));
+  // });
+  // // tempo selector
+  // game.$tempoSelect.on('change', function(e) {
+  //   game.currentStage = e.target.value;
+  // });
   // mode selector
   game.$modeSelect.on('change', function(e) {
     game.currentMode = e.target.value;
@@ -201,13 +225,19 @@ $( () => {
     }
   });
 
-  game.$go.on('click', function() {
+  game.startMove = function() {
     // disable button if already running
     if (game.isMoving) {
+      clearInterval(game.moveTimer);
+      game.$play.html('Play');
+      game.$play.removeClass('wrong');
+      game.isMoving = false;
       return;
     }
     game.noteNumber = 0;
     game.isMoving = true;
+    game.$play.html('Stop');
+    game.$play.addClass('wrong');
     game.moveTimer = setInterval( () => {
       game.noteNumber++;
       const randNoteID = game.genRand('move');
@@ -220,8 +250,8 @@ $( () => {
           game.currentNote = null;
         }, 4000);
       }
-    }, game.tempi[game.currentTempo]['tempo']);
-  });
+    }, game.stage[game.currentStage]['tempo']);
+  };
 
   game.playAudio = function(note) {
     game.$audio[note].currentTime = 0;
@@ -230,31 +260,78 @@ $( () => {
 
   // check if correct
   game.checkMatch = function() {
+    let correct = 0;
     for (let i = 0; i < game.pcNotes.length; i++) {
-      if (game.pcNotes[i] !== parseInt(game.playerNotes[i])) {
-        game.playerNotes = [];
-        game.canRetry = true;
-        game.isCheckingNotes = false;
-        game.$winmsg.html('Try again...');
-        setTimeout( () => {
-          game.$winmsg.html('');
-        }, 1500);
-        return false;
+      if (game.pcNotes[i] == game.playerNotes[i]) {
+        correct++;
       }
-      game.resetOnWin();
-      return true;
+      if (correct === game.pcNotes.length) {
+        console.log(game.playerNotes);
+        game.resetOnWin();
+        return true;
+      }
+    }
+    game.playerNotes = [];
+    console.log(game.playerNotes);
+    game.canRetry = true;
+    game.isCheckingNotes = false;
+    game.$winmsg.html('Try again...');
+    setTimeout( () => {
+      game.$winmsg.html('');
+    }, 1500);
+    return false;
+  };
+
+  game.stageComplete = function() {
+    game.showCompleteMsg = true;
+    const message = document.createElement('div');
+    message.classList.add('complete');
+    message.innerHTML = 'stage complete!';
+    const main = document.querySelector('main');
+    main.appendChild(message);
+    $('main').find('.complete').animate({ 'marginLeft': '0' }, { duration: 1000
+      // complete: function() {
+      //   setTimeout( () => {
+      //     $(this).remove();
+      //   }, 750);
+      // }
+    });
+  };
+
+
+  // level progression
+  game.levelProg = function() {
+    // add to levelScore
+    game.levelScore++;
+    // if matches length of current level, progress to next
+    if (game.levelScore === game[game.currentMode][game.currentLevel].length) {
+      if (game.currentLevel === 7 && game.levelScore === game[game.currentMode][7].length) {
+        clearInterval(game.moveTimer);
+        setTimeout( () => {
+          game.stageComplete();
+          game.currentTempo++;
+          game.currentLevel = 1;
+          console.log('complete');
+          game.$play.html('Play');
+          game.$play.removeClass('wrong');
+        }, 4000);
+        return;
+      }
+      game.levelScore = 0;
+      game.currentLevel++;
+      game.$stage.html('Stage '+game.currentStage);
     }
   };
 
   game.addScore = function() {
-    // levelScore++;
-    game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
+    game.levelProg();
+    game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
     game.$score.html('Score: '+game.score);
   };
 
   game.minusScore = function() {
     // make sure score doesn't go into negatives
-    const minus = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
+    const minus = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
     if (minus >= 0) {
       game.score = minus;
     }
@@ -268,7 +345,10 @@ $( () => {
     game.addScore();
     game.$retry.addClass('disabled');
     game.$winmsg.html('Correct!');
-    $('.pcmsg').html('');
+    setTimeout( () => {
+      game.$winmsg.html('');
+    }, 1000);
+    game.$pcmsg.html('');
   };
 
   game.keyDepress = function(note) {
@@ -280,6 +360,7 @@ $( () => {
   // note flashes red if it's wrong, white if it's correct
   game.feedback = function(note, pos) {
     const $thisKey = $('#key'+note);
+    // ignore the linter it's stupid
     if (note==game.pcNotes[pos]) {
       $thisKey.addClass('correct');
       game.timeoutRemove($thisKey, 'correct');
@@ -293,11 +374,11 @@ $( () => {
     const newNote = document.createElement('li');
     if (noteID === 1 || noteID === 3 || noteID === 6 || noteID === 8 || noteID === 10 ) {
       const flat = document.createElement('li');
-      game.createNotes(newNote, 'note', false, noteID);
       game.createNotes(flat, 'flat', false, noteID);
+      game.createNotes(newNote, 'note', false, noteID);
       if (move) {
-        game.createNotes(newNote, 'note', true, noteID);
         game.createNotes(flat, 'flat', true, noteID);
+        game.createNotes(newNote, 'note', true, noteID);
         game.moveThis();
       }
       return;
@@ -380,7 +461,7 @@ $( () => {
         game.$retry.removeClass('disabled');
         $('.pcmsg').html('Your turn');
       }
-    }, game.tempi[game.currentTempo]['tempo']);
+    }, game.stage[game.currentStage]['tempo']);
   };
 
   game.pcChordPlayback = function() {
@@ -403,7 +484,7 @@ $( () => {
     // depress the key
     game.keyDepress(note);
     // if move mode and can play
-    if (game.moveMode && game.playMove) {
+    if (game.currentMode === 'move' && game.playMove) {
       game.moveCheckNotes(note);
       // for checking when in repeat seq mode
     } else if (game.isCheckingNotes) {
@@ -439,6 +520,13 @@ $( () => {
 
   // PC phrase playback
   game.$play.on('click', function() {
+    if (game.currentMode === 'move') {
+      if (game.showCompleteMsg) {
+        $('.complete').remove();
+      }
+      game.startMove();
+      return;
+    }
     game.resetNotesOnPage();
     game.playerNotes = [];
     game.pcNotes = [];
@@ -475,4 +563,5 @@ $( () => {
     game.pcPlayback();
   });
 
-});
+};
+$(game.start);

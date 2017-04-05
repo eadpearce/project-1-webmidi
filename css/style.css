@@ -46,8 +46,10 @@ label {
   font-weight: bold;
   line-height: 1.3em;
 }
-form { height: 270px }
+form { height: 130px }
 .notif {
+  display: inline-block;
+  width: 125px;
   margin: 15px 0;
   padding: 0 10px;
   font-weight: bold;
@@ -55,6 +57,16 @@ form { height: 270px }
   clear: both;
 }
 .notif:after { content: '\00a0' }
+.complete {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 50px;
+  position: absolute;
+  top: 133px;
+  padding-left: 40px;
+  margin-left: 100%;
+  white-space: nowrap;
+}
 .pre { font-size: 20px }
 h1 {
   text-align: center;
@@ -139,7 +151,7 @@ ul.black-label { margin-left: 22px }
 .wrong { border-color: red }
 .correct { border-color: white }
 .manuscript {
-  height: 120px;
+  height: 100px;
   width: 100%;
 }
 .lines {
