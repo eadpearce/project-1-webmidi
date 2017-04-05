@@ -215,6 +215,10 @@ $( () => {
       if (game.noteNumber >= game.levelLength) {
         clearInterval(game.moveTimer);
         game.isMoving = false;
+        // reset currentNote when the notes have gone
+        setTimeout( () => {
+          game.currentNote = null;
+        }, 4000);
       }
     }, game.tempi[game.currentTempo]['tempo']);
   });
@@ -225,9 +229,9 @@ $( () => {
   };
 
   // check if correct
-  function checkMatch() {
+  game.checkMatch = function() {
     for (let i = 0; i < game.pcNotes.length; i++) {
-      if (game.pcNotes[i] !== game.playerNotes[i]) {
+      if (game.pcNotes[i] !== parseInt(game.playerNotes[i])) {
         game.playerNotes = [];
         game.canRetry = true;
         game.isCheckingNotes = false;
@@ -237,29 +241,10 @@ $( () => {
         }, 1500);
         return false;
       }
+      game.resetOnWin();
+      return true;
     }
-    game.resetOnWin();
-    return true;
-  }
-
-  function checkMatchChord() {
-    let correct = 0;
-    for (let i = 0; i < game.playerNotes.length; i++) {
-      if ($.inArray( game.playerNotes[i], game.pcNotes)===-1) {
-        return false;
-      } else {
-        const playerSorted = game.playerNotes.sort();
-        if (game.pcNotes[i] === playerSorted[i]) {
-          correct++;
-        }
-      }
-    }
-    if (correct === game.pcNotes.length) {
-      console.log('correct');
-    }
-    game.resetOnWin();
-    return true;
-  }
+  };
 
   game.addScore = function() {
     // levelScore++;
@@ -295,7 +280,6 @@ $( () => {
   // note flashes red if it's wrong, white if it's correct
   game.feedback = function(note, pos) {
     const $thisKey = $('#key'+note);
-    console.log(note);
     if (note==game.pcNotes[pos]) {
       $thisKey.addClass('correct');
       game.timeoutRemove($thisKey, 'correct');
@@ -425,18 +409,13 @@ $( () => {
     } else if (game.isCheckingNotes) {
       game.feedback(note, game.noteNumber);
       game.playerNotes.push(note);
-      console.log(game.playerNotes);
       game.noteNumber++;
       // check when done
       if (game.noteNumber===game.pcNotes.length) {
         // reset the noteNumber
         game.noteNumber = 0;
         // check for a match
-        if (game.currentMode === 'chord') {
-          checkMatchChord();
-        } else if (game.currentMode === 'seq') {
-          checkMatch();
-        }
+        game.checkMatch();
       }
     }
 
