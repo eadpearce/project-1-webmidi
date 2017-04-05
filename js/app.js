@@ -189,7 +189,6 @@ $( () => {
         game.isMoving = false;
       }
     }, game.tempi[game.currentTempo]['tempo']);
-
   });
 
   // level selector
@@ -260,13 +259,24 @@ $( () => {
     return true;
   }
 
+  game.addScore = function() {
+    // levelScore++;
+    game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
+    $score.html('Score: '+game.score);
+  };
+
+  game.minusScore = function() {
+    if (game.score !== 0) {
+      game.score = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
+    }
+    $score.html('Score: '+game.score);
+  };
+
   function ifWin() {
     game.playerNotes = [];
     game.canRetry = false;
-    // levelScore++;
-    game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
+    game.addScore();
     $retry.addClass('disabled');
-    $score.html('Score: '+game.score);
     $winmsg.html('Correct!');
     $('.pcmsg').html('');
   }
@@ -337,40 +347,37 @@ $( () => {
     });
   };
 
-  game.winMove = function() {
-    game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
-    $score.html('Score: '+game.score);
-    $('.current').addClass('note-correct');
+  game.timeoutRemove = function(element, classtoRemove) {
     setTimeout( () => {
-      $('.current').removeClass('note-correct');
-    }, 250);
-    $('.playpos-top').addClass('active');
-    setTimeout( () => {
-      $('.playpos-top').removeClass('active');
-    }, 250);
-    $('.playpos-bottom').addClass('active');
-    setTimeout( () => {
-      $('.playpos-bottom').removeClass('active');
+      element.removeClass(classtoRemove);
     }, 250);
   };
 
-  game.loseMove = function() {
-    if (game.score !== 0) {
-      game.score = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.tempi[game.currentTempo].score);
+  game.moveFeedback = function(status) {
+    const $currentNote = $('.current');
+    const $top = $('.playpos-top');
+    const $bottom = $('.playpos-bottom');
+    switch (status) {
+      case 'correct':
+        game.addScore();
+        $currentNote.addClass('note-correct');
+        game.timeoutRemove($currentNote, 'note-correct');
+        $top.addClass('active');
+        game.timeoutRemove($top, 'active');
+        $bottom.addClass('active');
+        game.timeoutRemove($bottom, 'active');
+        break;
+      case 'wrong':
+        game.minusScore();
+        $currentNote.addClass('note-wrong');
+        game.timeoutRemove($currentNote, 'note-wrong');
+        $top.addClass('active pos-wrong');
+        game.timeoutRemove($top, 'active pos-wrong');
+        $bottom.addClass('active pos-wrong');
+        game.timeoutRemove($bottom, 'active pos-wrong');
+        break;
+      default:
     }
-    $score.html('Score: '+game.score);
-    $('.current').addClass('note-wrong');
-    setTimeout( () => {
-      $('.current').removeClass('note-wrong');
-    }, 250);
-    $('.playpos-top').addClass('active pos-wrong');
-    setTimeout( () => {
-      $('.playpos-top').removeClass('active pos-wrong');
-    }, 250);
-    $('.playpos-bottom').addClass('active pos-wrong');
-    setTimeout( () => {
-      $('.playpos-bottom').removeClass('active pos-wrong');
-    }, 250);
   };
 
   game.pcPlayback = function() {
@@ -417,9 +424,9 @@ $( () => {
     if (game.moveMode && game.playMove) {
       // ignore the stupid linter here
       if (note == game.currentNote) {
-        game.winMove();
+        game.moveFeedback('correct');
       } else {
-        game.loseMove();
+        game.moveFeedback('wrong');
       }
     } else if (game.checkNotes) {
       game.feedback(parseInt(note), game.noteNumber);
