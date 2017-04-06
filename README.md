@@ -8,19 +8,31 @@ First project for WDI London
 ![screenshot2](https://pbs.twimg.com/media/C8vQHjqXcAAf9QK.jpg)
 
 ### Project Brief
-
 * Create a game using everything we've learned in the first 2 weeks of the WDI course.  
 * Make it object oriented if possible.  
 
 ### Tools Used 
-* Audacity to edit audio samples 
+* Audacity 
 * Javascript, HTML, CSS 
 * jQuery 
-* 
+* reset.css 
+
+
+### Future Plans...
+There are a lot more features that I would have liked to add, and may add in future, such as:
+
+* A bank of well-known tunes for the computer to play
+* Backing tracks
+* Fully responsive design, making sure the keys are life-sized for tablets and touchscreens 
+* Different samples for the keys 
+* More complicated notation (e.g. beamed quavers and sharps/naturals) and different rhythms 
+* Animated text when playing a correct/incorrect note
+* Animated text showing how many points are being scored 
+* MIDI support using WebMidi.js <https://github.com/cotejp/webmidi> 
+* Pitch recognition so you can play with a microphone by singing or playing an instrument 
 
 
 ### Credits 
-
 Piano samples from <http://theremin.music.uiowa.edu/MISpiano.html>  
 'Ping' sound effect from <https://www.freesound.org/people/BristolStories/sounds/51702/>  
 Online hosting by Heroku <https://herokuapp.com>
