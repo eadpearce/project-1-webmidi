@@ -98,8 +98,7 @@ game.genRand = function(type, length) {
   }
 };
 
-game.start = function() {
-  // set up audio tags and src FIRST
+game.start = function() { // set up audio tags and src FIRST
   game.container = document.querySelector('.container');
   for (let i = 0; i < 12; i++) {
     const audios = document.createElement('audio');
@@ -220,10 +219,11 @@ game.start = function() {
 
   game.congrats = function() {
     game.showCompleteMsg = true; // showing complete msg
-    game.resetProg();
-    game.currentLevel = 1; // reset level and stage
-    game.currentStage = 1;
     setTimeout( () => {
+      game.resetProg();
+      game.currentLevel = 1; // reset level and stage
+      game.currentStage = 1;
+      game.score = 0; 
       game.completeMsg('congratulations!');
       game.$play.html('Play again');
       game.$play.removeClass('wrong');
