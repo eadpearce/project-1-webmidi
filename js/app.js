@@ -213,6 +213,49 @@ game.start = function() {
     }
   });
 
+  game.resetProg = function() {
+    game.currentLevel = 1; // reset level to 1
+    game.levelScore = 0; // reset levelScore
+  };
+
+  game.congrats = function() {
+    game.showCompleteMsg = true; // showing complete msg
+    game.resetProg();
+    game.currentLevel = 1; // reset level and stage
+    game.currentStage = 1;
+    setTimeout( () => {
+      game.completeMsg('congratulations!');
+      game.$play.html('Play again');
+      game.$play.removeClass('wrong');
+    }, 3000); // so msg shows once notes have left the screen
+  };
+
+  game.stageComp = function() {
+    setTimeout( () => {
+      game.currentStage++; // go to next stage
+      // console.log('stage: '+game.currentStage);
+      game.completeMsg('stage complete!');
+      game.$play.html('Play');
+      game.$play.removeClass('wrong');
+      game.resetProg();
+    }, 3500);
+  };
+
+  game.tryAgain = function() {
+    setTimeout( () => {
+      game.completeMsg('Try again...');
+    }, 3500);
+    game.resetProg();
+  };
+
+  game.simonSaysComp = function() {
+    game.resetProg();
+    game.showCompleteMsg = true; // showing complete msg
+    game.resetNotesOnPage(); // clear notes
+    game.completeMsg('stage complete!');
+    game.$play.html('Next stage');
+  };
+
   game.startMove = function() {
     if (game.isMoving) { // disable button if already running
       clearInterval(game.moveTimer);
@@ -224,6 +267,7 @@ game.start = function() {
     game.noteNumber = 0;
     game.isMoving = true;
     game.$play.html('Stop');
+    game.$stage.html('Stage '+game.currentStage);
     game.$play.addClass('wrong');
     game.moveTimer = setInterval( () => {
       game.noteNumber++;
@@ -235,47 +279,21 @@ game.start = function() {
         clearInterval(game.moveTimer); // stop the game making notes
         setTimeout( () => {
           game.isMoving = false;
-          console.log('finished');
+          // console.log('finished');
           game.currentNote = null; // reset currentNote when the notes have gone
         }, 4000);
         if (game.currentLevel >= 7) { // and if finished current stage
           if (game.currentStage === 7) { // if completed the final stage
-            game.showCompleteMsg = true; // showing complete msg
-            game.currentLevel = 1; // reset level to 1
-            game.levelScore = 0; // reset levelScore
-            setTimeout( () => {
-              game.completeMsg('congratulations!');
-              game.$play.html('Play again');
-              game.$play.removeClass('wrong');
-            }, 3000); // so msg shows once notes havce left the screen
+            game.congrats();
             return;
           }
-
-          setTimeout( () => {
-            game.currentStage++; // go to next stage
-            console.log('stage: '+game.currentStage);
-            game.completeMsg('stage complete!');
-            game.$play.html('Play');
-            game.$play.removeClass('wrong');
-            game.$stage.html('Stage '+game.currentStage);
-            game.currentLevel = 1; // reset level to 1
-            game.levelScore = 0; // reset levelScore
-          }, 3500);
-
+          game.stageComp();
           if (game.currentMode !== 'move') { // for simon says mode
-            game.showCompleteMsg = true; // showing complete msg
-            game.resetNotesOnPage(); // clear notes
-            game.completeMsg('stage complete!');
-            game.$play.html('Next stage');
-            game.$stage.html('Stage '+game.currentStage);
+            game.simonSaysComp();
             return;
           }
         } else if (game.currentLevel <= 7 && game.levelScore < game[game.currentMode][game.currentLevel].length) {
-          setTimeout( () => {
-            game.completeMsg('Try again...');
-          }, 3500);
-          game.currentLevel = 1; // reset level to 1
-          game.levelScore = 0; // reset levelScore
+          game.tryAgain();
         }
       }
     }, game.stage[game.currentStage]['tempo']);
@@ -297,13 +315,13 @@ game.start = function() {
         correct++;
       }
       if (correct === game.pcNotes.length) {
-        console.log(game.playerNotes);
+        // console.log(game.playerNotes);
         game.resetOnWin();
         return true;
       }
     }
     game.playerNotes = [];
-    console.log(game.playerNotes);
+    // console.log(game.playerNotes);
     game.canRetry = true;
     game.isCheckingNotes = false;
     game.$winmsg.html('Try again...');
@@ -328,7 +346,7 @@ game.start = function() {
       game.levelScore++;
     }
     if (game.currentLevel >= 7) { // don't do the next part if level is already 8
-      console.log('level reached 8!!!');
+      // console.log('level reached 8!!!');
       return;
     }
     if (game.levelScore === game[game.currentMode][game.currentLevel].length) {
@@ -336,7 +354,7 @@ game.start = function() {
       if (game.currentLevel <= 7) { // only go to next level if <= 7
         game.currentLevel++;
       }
-      console.log('level '+game.currentLevel);
+      // console.log('level '+game.currentLevel);
     }
   };
 
@@ -360,6 +378,8 @@ game.start = function() {
       const minus = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
       if (minus >= 0) {
         game.score = minus;
+      } else {
+        game.score = 0;
       }
       game.$score.html('Score: '+game.score);
     }
