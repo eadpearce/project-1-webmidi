@@ -35,4 +35,5 @@ There are a lot more features that I would have liked to add, and may add in fut
 ### Credits 
 Piano samples from <http://theremin.music.uiowa.edu/MISpiano.html>  
 'Ping' sound effect from <https://www.freesound.org/people/BristolStories/sounds/51702/>  
-Online hosting by Heroku <https://herokuapp.com>
+Online hosting by Heroku <https://herokuapp.com>  
+Font by Google Fonts <https://fonts.googleapis.com/css?family=Cardo>
