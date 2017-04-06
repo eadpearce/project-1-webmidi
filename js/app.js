@@ -59,33 +59,20 @@ game.stage = {
 game.currentLevel = 1;
 game.currentMode = 'seq'; // seq chord or move
 game.currentStage = 1;
-// score weighting for difficulty - 1 is easy 2 is hard
-game.currentDifficulty = 1;
-// time to keep track of notes played
-// game.playTime = 0;
-// arrays to check for matching notes
-game.playerNotes = [];
+game.currentDifficulty = 1; // score weighting for difficulty - 1 is easy 2 is hard
+game.playerNotes = []; // arrays to check for matching notes
 game.pcNotes = [];
-// enables key feedback on playing
-game.isCheckingNotes = false;
+game.isCheckingNotes = false; // enables key feedback on playing
 game.canRetry = false;
-// turn notation on/off
-game.useNotation = true;
-// game.moveMode = true;
-// stores value of note at play point
-game.currentNote = null;
+game.useNotation = true; // turn notation on/off
+game.currentNote = null; // stores value of note at play point
 game.playMove = false;
-// stops go button being triggered more than once
-game.isMoving = false;
-// length of each string of notes in move mode
-game.levelLength = 50;
+game.isMoving = false; // stops play button being triggered more than once
+game.levelLength = 50; // length of each string of notes in move mode
 game.showCompleteMsg = false;
-// note number in phrase - used in all modes
-game.noteNumber = 0;
-// for the move mode setInterval
-game.moveTimer;
-// score starts at 0
-game.score = 0;
+game.noteNumber = 0; // note number in phrase - used in all modes
+game.moveTimer; // for the move mode setInterval
+game.score = 0; // score starts at 0
 game.levelScore = 0;
 
 // condensed random generator into one function
@@ -124,16 +111,6 @@ game.start = function() {
   game.ping.id = 'ping';
   game.ping.src = 'sounds/ping.ogg';
   game.container.appendChild(game.ping);
-  // make the controls
-  // const controls = document.querySelector('.controls');
-  // const playButt = document.createElement('button');
-  // playButt.classList.add('options', 'play');
-  // playButt.innerHTML = 'Play';
-  // controls.appendChild(playButt);
-  // const retryButt = document.createElement('button');
-  // retryButt.classList.add('options', 'retry');
-  // retryButt.innerHTML = 'Retry';
-  // controls.appendChild(retryButt);
 
   game.$audio = $('audio');
   game.$audio[12].volume = 0.2;
@@ -151,6 +128,7 @@ game.start = function() {
   game.$difficulty = $('.difficulty');
   game.$notation = $('.notation');
   game.notes = document.querySelector('.notes');
+
   // initialise controls
   $('.playpos-top').addClass('playpos-hide');
   $('.playpos-bottom').addClass('playpos-hide');
@@ -185,8 +163,7 @@ game.start = function() {
     }
   };
 
-  game.moveThis = function() {
-    // animation
+  game.moveThis = function() { // animation
     $('.manuscript').find('.move').animate({ 'left': '-=460px' }, {
       duration: 4000, easing: 'linear', complete: function() {
         $(this).remove();
@@ -206,17 +183,7 @@ game.start = function() {
     });
   };
 
-  // // level selector
-  // game.$levelSelect.on('change', function() {
-  //   game.currentLevel = parseInt(this.value.slice(5));
-  //   game.$level.html('Level '+this.value.slice(5));
-  // });
-  // // tempo selector
-  // game.$tempoSelect.on('change', function(e) {
-  //   game.currentStage = e.target.value;
-  // });
-  // mode selector
-  game.$modeSelect.on('change', function(e) {
+  game.$modeSelect.on('change', function(e) { // mode selector
     game.currentMode = e.target.value;
     game.resetNotesOnPage();
     if (game.currentMode === 'move') {
@@ -233,12 +200,12 @@ game.start = function() {
       $('.playpos-bottom').addClass('playpos-hide');
     }
   });
-  // difficulty selector
-  game.$difficulty.on('change', function(e) {
+
+  game.$difficulty.on('change', function(e) { // difficulty selector for simon says mode
     game.currentDifficulty = parseInt(e.target.value);
   });
-  // notation on/off (doesn't affect score)
-  game.$notation.on('change', function(e) {
+
+  game.$notation.on('change', function(e) { // notation on/off (doesn't affect score) for simon says mode
     if (e.target.value === 'on') {
       game.useNotation = true;
     } else if (e.target.value === 'off') {
@@ -247,8 +214,7 @@ game.start = function() {
   });
 
   game.startMove = function() {
-    // disable button if already running
-    if (game.isMoving) {
+    if (game.isMoving) { // disable button if already running
       clearInterval(game.moveTimer);
       game.$play.html('Play');
       game.$play.removeClass('wrong');
@@ -263,27 +229,54 @@ game.start = function() {
       game.noteNumber++;
       const randNoteID = game.genRand('move');
       game.addNotes(true, randNoteID);
-      if (game.noteNumber === game.levelLength) {
-        if (game.currentLevel <= 7 && game.levelScore < 10) {
-          // reset level to 1
-          game.currentLevel = 1;
-          // show lose message
+      if (game.noteNumber === game.levelLength) { // if finished current sequence
+        game.$play.removeClass('wrong');
+        game.$play.html('Play'); // reset the play button when notes have gone
+        clearInterval(game.moveTimer); // stop the game making notes
+        setTimeout( () => {
+          game.isMoving = false;
+          console.log('finished');
+          game.currentNote = null; // reset currentNote when the notes have gone
+        }, 4000);
+        if (game.currentLevel >= 7) { // and if finished current stage
+          if (game.currentStage === 7) { // if completed the final stage
+            game.showCompleteMsg = true; // showing complete msg
+            game.currentLevel = 1; // reset level to 1
+            game.levelScore = 0; // reset levelScore
+            setTimeout( () => {
+              game.completeMsg('congratulations!');
+              game.$play.html('Play again');
+              game.$play.removeClass('wrong');
+            }, 3000); // so msg shows once notes havce left the screen
+            return;
+          }
+
+          setTimeout( () => {
+            game.currentStage++; // go to next stage
+            console.log('stage: '+game.currentStage);
+            game.completeMsg('stage complete!');
+            game.$play.html('Play');
+            game.$play.removeClass('wrong');
+            game.$stage.html('Stage '+game.currentStage);
+            game.currentLevel = 1; // reset level to 1
+            game.levelScore = 0; // reset levelScore
+          }, 3500);
+
+          if (game.currentMode !== 'move') { // for simon says mode
+            game.showCompleteMsg = true; // showing complete msg
+            game.resetNotesOnPage(); // clear notes
+            game.completeMsg('stage complete!');
+            game.$play.html('Next stage');
+            game.$stage.html('Stage '+game.currentStage);
+            return;
+          }
+        } else if (game.currentLevel <= 7 && game.levelScore < game[game.currentMode][game.currentLevel].length) {
           setTimeout( () => {
             game.completeMsg('Try again...');
-          }, 3000);
+          }, 3500);
+          game.currentLevel = 1; // reset level to 1
+          game.levelScore = 0; // reset levelScore
         }
-        // reset the play button when notes have gone
-        setTimeout( () => {
-          game.$play.html('Play');
-          game.$play.removeClass('wrong');
-        }, 4000);
-        // stop the game making notes
-        clearInterval(game.moveTimer);
-        game.isMoving = false;
-        // reset currentNote when the notes have gone
-        setTimeout( () => {
-          game.currentNote = null;
-        }, 4000);
       }
     }, game.stage[game.currentStage]['tempo']);
   };
@@ -291,13 +284,13 @@ game.start = function() {
   game.playAudio = function(note) {
     game.$audio[note].currentTime = 0;
     game.$audio[note].play();
-    if (note == game.currentNote) {
+    if (note == game.currentNote) { // ignore the dumb linter - for checking strings against numbers
+      game.$audio[12].currentTime = 0;
       game.$audio[12].play();
     }
   };
 
-  // check if correct
-  game.checkMatch = function() {
+  game.checkMatch = function() { // check if correct
     let correct = 0;
     for (let i = 0; i < game.pcNotes.length; i++) {
       if (game.pcNotes[i] == game.playerNotes[i]) {
@@ -330,73 +323,40 @@ game.start = function() {
     $('main').find('.complete').animate({ 'marginLeft': '0' }, { duration: 1000 });
   };
 
-
-  // level progression
-  game.levelProg = function() {
-    // add to levelScore
-    game.levelScore++;
-    // if matches length of current level, progress to next
+  game.levelProg = function() { // level progression
+    if (game.currentLevel <= 7) { // only add to levelscore if level <= 7
+      game.levelScore++;
+    }
+    if (game.currentLevel >= 7) { // don't do the next part if level is already 8
+      console.log('level reached 8!!!');
+      return;
+    }
     if (game.levelScore === game[game.currentMode][game.currentLevel].length) {
       game.levelScore = 0;
-      game.currentLevel++;
-      // end of stage
-      if (game.currentLevel >= 7 && game.levelScore >= game[game.currentMode][7].length) {
-        game.currentStage++;
-        game.currentLevel = 1;
-        game.levelScore = 0;
-        clearInterval(game.moveTimer);
-        // if complete last stage
-        if (game.currentStage > 7) {
-          game.showCompleteMsg = true;
-          setTimeout( () => {
-            game.completeMsg('congratulations!');
-            game.$play.html('Play again');
-            game.$play.removeClass('wrong');
-          }, 3000);
-          return;
-        } else if (game.currentMode !== 'move') {
-          game.showCompleteMsg = true;
-          game.resetNotesOnPage();
-          game.completeMsg('stage complete!');
-          game.$play.html('Next stage');
-          game.$stage.html('Stage '+game.currentStage);
-          return;
-        }
-        game.showCompleteMsg = true;
-        setTimeout( () => {
-          game.completeMsg('stage complete!');
-          game.$play.html('Play');
-          game.$play.removeClass('wrong');
-          game.$stage.html('Stage '+game.currentStage);
-        }, 3000);
-        return;
+      if (game.currentLevel <= 7) { // only go to next level if <= 7
+        game.currentLevel++;
       }
+      console.log('level '+game.currentLevel);
     }
   };
 
   game.addScore = function() {
-    game.levelProg();
-    // to stop error when stage reaches 8
-    if (game.currentStage > 7) {
+    game.levelProg(); // to stop error when stage/level reaches 8
+    if (game.currentStage > 7 || game.currentLevel > 7) {
       game.score = game.score + (game[game.currentMode][7].score * game.currentDifficulty * game.stage[7].score);
-      // stop it breaking when level > 7
-    } else if (game.currentLevel > 7) {
-      game.score = game.score + (game[game.currentMode][7].score * game.currentDifficulty * game.stage[7].score);
-      // otherwise use score multiplier from currentLevel/Stage
-    } else {
+    } else { // otherwise use score multiplier from currentLevel/Stage
       game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
       game.$score.html('Score: '+game.score);
     }
   };
 
   game.minusScore = function() {
-    if (game.currentStage > 7) {
+    if (game.currentStage > 7 || game.currentLevel > 7) {
       const minus = game.score - (game[game.currentMode][7].score * game.currentDifficulty * game.stage[7].score);
       if (minus >= 0) {
         game.score = minus;
       }
-    } else {
-      // make sure score doesn't go into negatives
+    } else { // make sure score doesn't go into negatives
       const minus = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
       if (minus >= 0) {
         game.score = minus;
@@ -424,8 +384,7 @@ game.start = function() {
     game.timeoutRemove($thisKey, 'depress');
   };
 
-  // note flashes red if it's wrong, white if it's correct
-  game.feedback = function(note, pos) {
+  game.feedback = function(note, pos) { // note flashes red if it's wrong, white if it's correct
     const $thisKey = $('#key'+note);
     // ignore the linter it's stupid
     if (note==game.pcNotes[pos]) {
@@ -473,8 +432,7 @@ game.start = function() {
     }, 250);
   };
 
-  game.moveCheckNotes = function(note) {
-    // ignore the stupid linter here bc note is a string not a number
+  game.moveCheckNotes = function(note) { // ignore the stupid linter here bc note is a string not a number
     if (note == game.currentNote) {
       game.moveFeedback('correct');
     } else {
@@ -546,31 +504,23 @@ game.start = function() {
   };
 
   game.playerPlayback = function(note) {
-    // play the note
-    game.playAudio(note);
-    // depress the key
-    game.keyDepress(note);
-    // if move mode and can play
-    if (game.currentMode === 'move' && game.playMove) {
+    game.playAudio(note); // play the note
+    game.keyDepress(note); // depress the key
+    if (game.currentMode === 'move' && game.playMove) { // if move mode and can play
       game.moveCheckNotes(note);
-      // for checking when in repeat seq mode
-    } else if (game.isCheckingNotes) {
+    } else if (game.isCheckingNotes) { // for checking when in repeat seq mode
       game.feedback(note, game.noteNumber);
       game.playerNotes.push(note);
       game.noteNumber++;
-      // check when done
-      if (game.noteNumber===game.pcNotes.length) {
-        // reset the noteNumber
-        game.noteNumber = 0;
-        // check for a match
-        game.checkMatch();
+      if (game.noteNumber===game.pcNotes.length) { // check when done
+        game.noteNumber = 0; // reset the noteNumber
+        game.checkMatch(); // check for a match
       }
     }
 
   };
 
-  // computer keyboard playback
-  $(document).keydown( function(e) {
+  $(document).keydown( function(e) { // computer keyboard playback
     if ($.inArray( e.keyCode, game.keyboardControl)===-1) {
       return;
     }
@@ -578,15 +528,13 @@ game.start = function() {
     game.playerPlayback(keyboardNote);
   });
 
-  // mouse playback
-  game.$keys.on('mousedown', function(e) {
+  game.$keys.on('mousedown', function(e) { // mouse playback
     const thisKey = e.target.id;
     const keyId = thisKey.slice(3);
     game.playerPlayback(keyId);
   });
 
-  // PC phrase playback
-  game.$play.on('click', function() {
+  game.$play.on('click', function() { // PC phrase playback
     if (game.currentMode === 'move') {
       if (game.showCompleteMsg) {
         game.showCompleteMsg = false;
@@ -602,12 +550,6 @@ game.start = function() {
       game.playerNotes = [];
       game.pcNotes = [];
       $('.pcmsg').html('Playing...');
-      // if (game.currentMode === 'chord') {
-      //   const length = Object.keys(game.chord[game.currentLevel].notes).length;
-      //   game.pcNotes = game.genRand('chord', length);
-      //   game.pcChordPlayback();
-      //   return;
-      // }
       const length = game.seq[game.currentLevel].phraseLength;
       game.pcNotes = game.genRand('seq', length);
       game.pcPlayback();
@@ -619,8 +561,7 @@ game.start = function() {
     game.notes.innerHTML = '';
   };
 
-  // PC retry/repeat button
-  game.$retry.on('click', function(e) {
+  game.$retry.on('click', function(e) { // PC retry/repeat button
     game.resetNotesOnPage();
     if (!game.canRetry) {
       e.preventDefault();
@@ -636,4 +577,5 @@ game.start = function() {
   });
 
 };
+
 $(game.start);
