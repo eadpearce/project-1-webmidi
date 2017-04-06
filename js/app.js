@@ -223,11 +223,11 @@ game.start = function() { // set up audio tags and src FIRST
       game.resetProg();
       game.currentLevel = 1; // reset level and stage
       game.currentStage = 1;
-      game.score = 0; 
+      game.score = 0;
       game.completeMsg('congratulations!');
       game.$play.html('Play again');
       game.$play.removeClass('wrong');
-    }, 3000); // so msg shows once notes have left the screen
+    }, 4000); // so msg shows once notes have left the screen
   };
 
   game.stageComp = function() {
@@ -238,13 +238,13 @@ game.start = function() { // set up audio tags and src FIRST
       game.$play.html('Play');
       game.$play.removeClass('wrong');
       game.resetProg();
-    }, 3500);
+    }, 4000);
   };
 
   game.tryAgain = function() {
     setTimeout( () => {
       game.completeMsg('Try again...');
-    }, 3500);
+    }, 4000);
     game.resetProg();
   };
 
