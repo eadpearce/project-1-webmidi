@@ -51,7 +51,9 @@ game.stage = {
   2: { tempo: 666.66, score: 2 }, // 60bpm
   3: { tempo: 500, score: 3 }, // 90bpm
   4: { tempo: 428.57, score: 4 }, // 120bpm
-  5: { tempo: 333.33, score: 5 } // 140bpm
+  5: { tempo: 333.33, score: 5 }, // 140bpm
+  6: { tempo: 300, score: 6 },
+  7: { tempo: 280, score: 7 }
 };
 // start at level1 by default
 game.currentLevel = 1;
@@ -118,19 +120,23 @@ game.start = function() {
     audios.src = 'sounds/audio'+i+'.ogg';
     game.container.appendChild(audios);
   }
+  game.ping = document.createElement('audio');
+  game.ping.id = 'ping';
+  game.ping.src = 'sounds/ping.ogg';
+  game.container.appendChild(game.ping);
   // make the controls
-  const controls = document.querySelector('.controls');
-  const playButt = document.createElement('button');
-  playButt.classList.add('options', 'play');
-  playButt.innerHTML = 'Play';
-  controls.appendChild(playButt);
-  const retryButt = document.createElement('button');
-  retryButt.classList.add('options', 'retry');
-  retryButt.innerHTML = 'Retry';
-  controls.appendChild(retryButt);
-
+  // const controls = document.querySelector('.controls');
+  // const playButt = document.createElement('button');
+  // playButt.classList.add('options', 'play');
+  // playButt.innerHTML = 'Play';
+  // controls.appendChild(playButt);
+  // const retryButt = document.createElement('button');
+  // retryButt.classList.add('options', 'retry');
+  // retryButt.innerHTML = 'Retry';
+  // controls.appendChild(retryButt);
 
   game.$audio = $('audio');
+  game.$audio[12].volume = 0.2;
   game.$play = $('.play');
   game.$go = $('.go');
   game.$retry = $('.retry');
@@ -146,12 +152,13 @@ game.start = function() {
   game.$notation = $('.notation');
   game.notes = document.querySelector('.notes');
   // initialise controls
+  $('.playpos-top').addClass('playpos-hide');
+  $('.playpos-bottom').addClass('playpos-hide');
   game.$stage.html('Stage 1');
   game.$score.html('Score: '+game.score);
   game.$retry.addClass('disabled');
   if (game.currentMode === 'move') {
     game.$retry.addClass('disabled');
-    game.$play.addClass('disabled');
   }
 
   game.createNotes = function(element, type, move, noteID) {
@@ -211,6 +218,20 @@ game.start = function() {
   // mode selector
   game.$modeSelect.on('change', function(e) {
     game.currentMode = e.target.value;
+    game.resetNotesOnPage();
+    if (game.currentMode === 'move') {
+      $('.pcmsg').html('');
+      $('.ss-options').hide();
+      $('.complete').hide();
+      $('.playpos-top').removeClass('playpos-hide');
+      $('.playpos-bottom').removeClass('playpos-hide');
+    } else if (game.currentMode === 'seq') {
+      $('.pcmsg').html('');
+      $('.complete').hide();
+      $('.ss-options').show();
+      $('.playpos-top').addClass('playpos-hide');
+      $('.playpos-bottom').addClass('playpos-hide');
+    }
   });
   // difficulty selector
   game.$difficulty.on('change', function(e) {
@@ -242,11 +263,21 @@ game.start = function() {
       game.noteNumber++;
       const randNoteID = game.genRand('move');
       game.addNotes(true, randNoteID);
-      if (game.noteNumber >= game.levelLength) {
+      if (game.noteNumber === game.levelLength) {
+        if (game.currentLevel <= 7 && game.levelScore < 10) {
+          // reset level to 1
+          game.currentLevel = 1;
+          // show lose message
+          setTimeout( () => {
+            game.completeMsg('Try again...');
+          }, 3000);
+        }
+        // reset the play button when notes have gone
         setTimeout( () => {
           game.$play.html('Play');
           game.$play.removeClass('wrong');
         }, 4000);
+        // stop the game making notes
         clearInterval(game.moveTimer);
         game.isMoving = false;
         // reset currentNote when the notes have gone
@@ -260,6 +291,9 @@ game.start = function() {
   game.playAudio = function(note) {
     game.$audio[note].currentTime = 0;
     game.$audio[note].play();
+    if (note == game.currentNote) {
+      game.$audio[12].play();
+    }
   };
 
   // check if correct
@@ -286,11 +320,11 @@ game.start = function() {
     return false;
   };
 
-  game.stageComplete = function() {
+  game.completeMsg = function(text) {
     game.showCompleteMsg = true;
     const message = document.createElement('div');
     message.classList.add('complete');
-    message.innerHTML = 'stage complete!';
+    message.innerHTML = text;
     const main = document.querySelector('main');
     main.appendChild(message);
     $('main').find('.complete').animate({ 'marginLeft': '0' }, { duration: 1000 });
@@ -303,37 +337,72 @@ game.start = function() {
     game.levelScore++;
     // if matches length of current level, progress to next
     if (game.levelScore === game[game.currentMode][game.currentLevel].length) {
-      if (game.currentLevel === 7 && game.levelScore === game[game.currentMode][7].length) {
-        clearInterval(game.moveTimer);
-        setTimeout( () => {
-          game.stageComplete();
-          game.$play.html('Play');
-          game.$play.removeClass('wrong');
-          game.currentStage++;
-          game.currentLevel = 1;
-          console.log('complete');
-        }, 3500);
-        return;
-      }
       game.levelScore = 0;
       game.currentLevel++;
-      game.$stage.html('Stage '+game.currentStage);
+      // end of stage
+      if (game.currentLevel >= 7 && game.levelScore >= game[game.currentMode][7].length) {
+        game.currentStage++;
+        game.currentLevel = 1;
+        game.levelScore = 0;
+        clearInterval(game.moveTimer);
+        // if complete last stage
+        if (game.currentStage > 7) {
+          game.showCompleteMsg = true;
+          setTimeout( () => {
+            game.completeMsg('congratulations!');
+            game.$play.html('Play again');
+            game.$play.removeClass('wrong');
+          }, 3000);
+          return;
+        } else if (game.currentMode !== 'move') {
+          game.showCompleteMsg = true;
+          game.resetNotesOnPage();
+          game.completeMsg('stage complete!');
+          game.$play.html('Next stage');
+          game.$stage.html('Stage '+game.currentStage);
+          return;
+        }
+        game.showCompleteMsg = true;
+        setTimeout( () => {
+          game.completeMsg('stage complete!');
+          game.$play.html('Play');
+          game.$play.removeClass('wrong');
+          game.$stage.html('Stage '+game.currentStage);
+        }, 3000);
+        return;
+      }
     }
   };
 
   game.addScore = function() {
     game.levelProg();
-    game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
-    game.$score.html('Score: '+game.score);
+    // to stop error when stage reaches 8
+    if (game.currentStage > 7) {
+      game.score = game.score + (game[game.currentMode][7].score * game.currentDifficulty * game.stage[7].score);
+      // stop it breaking when level > 7
+    } else if (game.currentLevel > 7) {
+      game.score = game.score + (game[game.currentMode][7].score * game.currentDifficulty * game.stage[7].score);
+      // otherwise use score multiplier from currentLevel/Stage
+    } else {
+      game.score = game.score + (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
+      game.$score.html('Score: '+game.score);
+    }
   };
 
   game.minusScore = function() {
-    // make sure score doesn't go into negatives
-    const minus = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
-    if (minus >= 0) {
-      game.score = minus;
+    if (game.currentStage > 7) {
+      const minus = game.score - (game[game.currentMode][7].score * game.currentDifficulty * game.stage[7].score);
+      if (minus >= 0) {
+        game.score = minus;
+      }
+    } else {
+      // make sure score doesn't go into negatives
+      const minus = game.score - (game[game.currentMode][game.currentLevel].score * game.currentDifficulty * game.stage[game.currentStage].score);
+      if (minus >= 0) {
+        game.score = minus;
+      }
+      game.$score.html('Score: '+game.score);
     }
-    game.$score.html('Score: '+game.score);
   };
 
   game.resetOnWin = function() {
@@ -520,24 +589,29 @@ game.start = function() {
   game.$play.on('click', function() {
     if (game.currentMode === 'move') {
       if (game.showCompleteMsg) {
+        game.showCompleteMsg = false;
         $('.complete').remove();
       }
       game.startMove();
       return;
+    } else {
+      game.showCompleteMsg = false;
+      game.$play.html('Play');
+      $('.complete').remove();
+      game.resetNotesOnPage();
+      game.playerNotes = [];
+      game.pcNotes = [];
+      $('.pcmsg').html('Playing...');
+      // if (game.currentMode === 'chord') {
+      //   const length = Object.keys(game.chord[game.currentLevel].notes).length;
+      //   game.pcNotes = game.genRand('chord', length);
+      //   game.pcChordPlayback();
+      //   return;
+      // }
+      const length = game.seq[game.currentLevel].phraseLength;
+      game.pcNotes = game.genRand('seq', length);
+      game.pcPlayback();
     }
-    game.resetNotesOnPage();
-    game.playerNotes = [];
-    game.pcNotes = [];
-    $('.pcmsg').html('Playing...');
-    if (game.currentMode === 'chord') {
-      const length = Object.keys(game.chord[game.currentLevel].notes).length;
-      game.pcNotes = game.genRand('chord', length);
-      game.pcChordPlayback();
-      return;
-    }
-    const length = game.seq[game.currentLevel].phraseLength;
-    game.pcNotes = game.genRand('seq', length);
-    game.pcPlayback();
   });
 
   game.resetNotesOnPage = function() {

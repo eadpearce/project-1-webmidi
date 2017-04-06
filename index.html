@@ -69,53 +69,40 @@
             <li>B</li>
           </ul>
         </div>
-        <div class="instructions">
-          <p>Press the play button to listen to the computer then try to play the melody back correctly.</p>
-          <p>You can play the piano with the mouse/touchscreen or by using the keys A to J for white notes and W to U for black notes.</p>
-        </div>
       </div>
       <div class="right-content">
         <div class="controls">
-          <!-- <button class="options play">Play</button>
-          <button class="options retry">Retry (-1 point)</button> -->
+          <button class="options play">Play</button>
+          <button class="options retry">Retry</button>
           <form>
-            <!-- <label class="level">Select level:</label><br>
-            <select name="level" class="options level-select">
-            <option value="level1" selected>Level 1</option>
-            <option value="level2">Level 2</option>
-            <option value="level3">Level 3</option>
-            <option value="level4">Level 4</option>
-            <option value="level5">Level 5</option>
-            <option value="level6">Level 6</option>
-            <option value="level7">Level 7</option>
-          </select> -->
-          <!-- <label class="tempo">Tempo:</label><br>
-          <select name="level" class="options tempo-select">
-            <option value="vslow">Very slow</option>
-            <option value="slow" selected>Slow</option>
-            <option value="med">Medium</option>
-            <option value="fast">Fast</option>
-            <option value="vfast">Very fast</option>
-          </select> -->
           <label class="mode">Mode:</label><br>
           <select name="mode" class="options mode-select">
-            <option value="seq" selected>Repeat the phrase</option>
+            <option value="seq" selected>Simon Says</option>
             <option value="move">Piano Hero</option>
             <!-- <option value="seq" selected>Sequence</option>
             <option value="chord">Chord</option> -->
           </select>
-          <div class="diff">
+          <div class="diff ss-options">
             <label for="difficulty">Difficulty:</label><br>
             <input class="difficulty" type="radio" name="difficulty" value="1" checked> Easy<br>
             <input class="difficulty" type="radio" name="difficulty" value="2"> Hard<br>
           </div>
-          <div class="not">
+          <div class="not ss-options">
             <label for="notation">Notation:</label><br>
             <input class="notation" type="radio" name="notation" value="on" checked>On<br>
             <input class="notation" type="radio" name="notation" value="off">Off<br>
           </div>
         </form>
       </div>
+    </div>
+
+    <div class="instructions">
+      <h2>Instructions</h2>
+      <p>You can play the piano with the mouse/touchscreen or by using the keys A to J for white notes and W to U for black notes. </p>
+      <h3>Simon Says: </h3>
+      <p>Press the play button and the computer will play a sequence of notes. Try to play the sequence back correctly. Hard mode means the keyboard will not light up as the computer plays but doubles the points you earn for a correct answer. Turning notation on or off does not affect points earned.</p>
+      <h3>Piano Hero: </h3>
+      <p>Press the play button and a sequence of notes will scroll along the manuscript above. Play the correct note on the keyboard as it reaches the cursor. As you progress to the next stage the notes will get faster! </p>
     </div>
   </div>
 </main>

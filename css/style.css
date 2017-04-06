@@ -8,13 +8,29 @@ main {
   width: 530px;
   margin: 0 auto;
 }
+h1, h2, h3 {
+  font-weight: bold;
+}
+h1 {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+  line-height: 1.3em;
+}
+h2, h3 {
+  font-size: 20px;
+  padding: 5px 0;
+}
+h3 {
+  font-size: 16px;
+}
 .title { height: 120px }
 .container {
   background-color: #eee;
-  height: 450px;
   padding: 20px;
   border-radius: 5px;
   border: 1px solid black;
+  margin-bottom: 50px;
 }
 .left-content {
   float: left;
@@ -26,7 +42,6 @@ main {
   float: left;
 }
 .instructions {
-  padding-top: 10px;
   line-height: 1.3em;
   clear: both;
 }
@@ -68,13 +83,6 @@ form { height: 130px }
   white-space: nowrap;
 }
 .pre { font-size: 20px }
-h1 {
-  text-align: center;
-  padding: 20px 0;
-  font-size: 30px;
-  font-weight: bold;
-  line-height: 1.3em;
-}
 .controls {
   height: 260px;
   width: 160px;
@@ -160,7 +168,7 @@ ul.black-label { margin-left: 22px }
   width: 100%;
 }
 .line1 { padding-top: 16px }
-.pos { background:grey }
+.playpos-hide { color: white }
 .playpos-top {
   position: absolute;
   top: 106px;
