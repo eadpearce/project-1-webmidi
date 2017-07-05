@@ -11,6 +11,7 @@
 var game = game || {};
 
 // index corresponds to note ID
+game.midi = { 'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11 };
 game.keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
 game.manuscript = { 0: 'c', 1: 'd', 2: 'd', 3: 'e', 4: 'e', 5: 'f', 6: 'g', 7: 'g', 8: 'a', 9: 'a', 10: 'b', 11: 'b' };
 game.seq = {
@@ -98,7 +99,50 @@ game.genRand = function(type, length) {
   }
 };
 
-game.start = function() { // set up audio tags and src FIRST
+game.midiStart = function() {
+  // set up webmidi
+
+  if (WebMidi.inputs[0]) $('.midi-start').css('background-color', '#c3ebff');
+  else $('.midi-start').css('background-color', '#ffaaaa');
+
+  console.log(WebMidi.inputs);
+  console.log('Input devices:');
+  WebMidi.inputs.forEach(input => {
+    console.log(`${input.manufacturer} ${input.name}`);
+  });
+  const devices = WebMidi.inputs;
+  $('.midi-inputs-length').text(`${devices.length} input device(s) found!`);
+  const $midiInputs = $('.midi-inputs');
+  $.each(devices, function() {
+    $midiInputs.append(`<option value="${this.id}" id="${this.id}">${this.name}</option>`);
+    $midiInputs.on('change', function() {
+      const device = WebMidi.getInputById($(this).val());
+      console.log($(this));
+      device.addListener('noteon', 'all',
+      function (e) {
+        // console.log('Received \"noteon\" message (' + e.note.name + ').');
+        const note = game.midi[e.note.name];
+        game.playerPlayback(note);
+      });
+    });
+  });
+
+};
+
+game.start = function() {
+  WebMidi.enable(function (err) {
+    if (err) {
+      console.log('WebMidi could not be enabled.', err);
+    }
+    else {
+      console.log('WebMidi enabled!');
+    }
+
+  });
+  $('.midi-start').on('click', function(e) {
+    game.midiStart();
+  });
+  // set up audio tags and src FIRST
   game.container = document.querySelector('.container');
   for (let i = 0; i < 12; i++) {
     const audios = document.createElement('audio');

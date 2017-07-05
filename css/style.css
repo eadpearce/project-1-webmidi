@@ -24,6 +24,10 @@ h2, h3 {
 h3 {
   font-size: 16px;
 }
+.inputs {
+  margin: 5px;
+  display: inline-block;
+}
 .title { height: 120px }
 .container {
   background-color: #eee;
@@ -47,10 +51,11 @@ h3 {
 }
 .options {
   width: 160px;
-  margin: 0 0 10px;
+  margin: 0 0 5px;
   font-family: 'Cardo', serif;
   font-weight:bold;
-  line-height: 1.5em;
+  line-height: 1em;
+  padding: 5px 0;
   background-color: white;
   border: 2px solid black;
   border-radius: 3px;
@@ -84,7 +89,7 @@ form { height: 130px }
 }
 .pre { font-size: 20px }
 .controls {
-  height: 260px;
+  height: 300;
   width: 160px;
   float: right;
 }
@@ -95,6 +100,7 @@ form { height: 130px }
 .not {
   width: 80px;
   float: right;
+  margin-bottom: 5px;
 }
 .options:hover { background: #ddd }
 .disabled {
