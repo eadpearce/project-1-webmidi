@@ -56,6 +56,9 @@ game.stage = {
   6: { tempo: 300, score: 6 },
   7: { tempo: 280, score: 7 }
 };
+// midi settings
+game.inputAdded = false;
+game.webMidiEnabled = false;
 // start at level1 by default
 game.currentLevel = 1;
 game.currentMode = 'seq'; // seq chord or move
@@ -100,30 +103,36 @@ game.genRand = function(type, length) {
 };
 
 game.midiStart = function() {
-  // set up webmidi
-
-  if (WebMidi.inputs[0]) $('.midi-start').css('background-color', '#c3ebff');
-  else $('.midi-start').css('background-color', '#ffaaaa');
-
-  console.log(WebMidi.inputs);
-  console.log('Input devices:');
-  WebMidi.inputs.forEach(input => {
-    console.log(`${input.manufacturer} ${input.name}`);
-  });
+  // change colour depending on devices found
+  if (game.webMidiEnabled && WebMidi.inputs[0]) $('.midi-start').css('background-color', '#c3ebff');
+  else {
+    $('.midi-start').css('background-color', '#ffaaaa');
+  }
+  // console.log(WebMidi.inputs);
+  // console.log('Input devices:');
+  // WebMidi.inputs.forEach(input => {
+  //   console.log(`${input.manufacturer} ${input.name}`);
+  // });
   const devices = WebMidi.inputs;
+
   $('.midi-inputs-length').text(`${devices.length} input device(s) found!`);
   const $midiInputs = $('.midi-inputs');
+  $midiInputs.empty().html('<option value="0">Select device</option>');
+
+  $midiInputs.off();
   $.each(devices, function() {
-    $midiInputs.append(`<option value="${this.id}" id="${this.id}">${this.name}</option>`);
-    $midiInputs.on('change', function() {
-      const device = WebMidi.getInputById($(this).val());
-      console.log($(this));
-      device.addListener('noteon', 'all',
-      function (e) {
-        // console.log('Received \"noteon\" message (' + e.note.name + ').');
-        const note = game.midi[e.note.name];
-        game.playerPlayback(note);
-      });
+    // console.log('this input',WebMidi.getInputById(this.id));
+    $midiInputs.append(`<option class="midi-input" value="${this.id}" id="${this.id}">${this.name}</option>`);
+  });
+  $midiInputs.on('change', function() {
+    const device = WebMidi.getInputById($(this).val());
+    inputAdded = true;
+    // console.log($(this));
+    device.addListener('noteon', 'all',
+    function (e) {
+      // console.log('Received \"noteon\" message (' + e.note.name + ').');
+      const note = game.midi[e.note.name];
+      game.playerPlayback(note);
     });
   });
 
@@ -133,12 +142,14 @@ game.start = function() {
   WebMidi.enable(function (err) {
     if (err) {
       console.log('WebMidi could not be enabled.', err);
-    }
-    else {
+      game.webMidiEnabled = false;
+      $('.midi-start').addClass('disabled');
+    } else {
       console.log('WebMidi enabled!');
+      game.webMidiEnabled = true;
     }
-
   });
+
   $('.midi-start').on('click', function(e) {
     game.midiStart();
   });
