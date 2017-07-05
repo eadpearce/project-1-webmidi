@@ -57,7 +57,6 @@ game.stage = {
   7: { tempo: 280, score: 7 }
 };
 // midi settings
-game.inputAdded = false;
 game.webMidiEnabled = false;
 // start at level1 by default
 game.currentLevel = 1;
@@ -126,7 +125,6 @@ game.midiStart = function() {
   });
   $midiInputs.on('change', function() {
     const device = WebMidi.getInputById($(this).val());
-    inputAdded = true;
     // console.log($(this));
     device.addListener('noteon', 'all',
     function (e) {
