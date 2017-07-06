@@ -14,14 +14,16 @@ var game = game || {};
 game.midi = { 'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11 };
 game.keyboardControl = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74];
 game.manuscript = { 0: 'c', 1: 'd', 2: 'd', 3: 'e', 4: 'e', 5: 'f', 6: 'g', 7: 'g', 8: 'a', 9: 'a', 10: 'b', 11: 'b' };
+// circle of fifths for level prog??
+// C maj, G maj, D min, A min, E min, B min,
 game.seq = {
-  1: { length: 3, score: 1, notes: [0,2,4], phraseLength: 3},
-  2: { length: 4, score: 2, notes: [0,2,4,5,7], phraseLength: 4 },
-  3: { length: 5, score: 3, notes: [0,2,4,5,7,9,11], phraseLength: 4 },
-  4: { length: 6, score: 4, notes: [0,2,4,5,7,9,11], phraseLength: 5 },
-  5: { length: 7, score: 5, notes: [0,1,2,3,4,5,6,7], phraseLength: 5 },
-  6: { length: 8, score: 6, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 5 },
-  7: { length: 10, score: 7, notes: [0,1,2,3,4,5,6,7,8,9,10,11], phraseLength: 7 }
+  1: { length: 3,  score: 1, notes: [0,2,4,5,7],        phraseLength: 3 }, // C maj
+  2: { length: 4,  score: 2, notes: [0,2,4,6,7],        phraseLength: 4 }, // G maj
+  3: { length: 5,  score: 3, notes: [1,2,4,5,7,10,11],  phraseLength: 4 }, // D min
+  4: { length: 6,  score: 4, notes: [0,2,4,5,6,8,9,11], phraseLength: 5 }, // A min
+  5: { length: 7,  score: 5, notes: [0,2,3,4,6,7,9,11], phraseLength: 5 }, // E min
+  6: { length: 8,  score: 6, notes: [1,2,4,6,8,10,11],  phraseLength: 5 }, // B min
+  7: { length: 10, score: 7, notes: [1,3,5,6,8,10,11],  phraseLength: 7 } // F# maj 
 };
 game.move = {
   1: { length: 3, notes: game.seq[1].notes, score: 1},
