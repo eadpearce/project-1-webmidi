@@ -25,7 +25,7 @@ h3 {
   font-size: 16px;
 }
 .none {
-  display: none; 
+  display: none;
 }
 .inputs {
   margin: 5px;
@@ -213,6 +213,10 @@ ul.black-label { margin-left: 22px }
   font-size: 100px;
   top: 106px;
 }
+.clef.linux {
+  font-size: 80px;
+  top: 112px;
+}
 .clef:before { content: '\1d11e' }
 .lines:after { content: '\00a0' }
 .notes {
@@ -226,6 +230,14 @@ ul.black-label { margin-left: 22px }
   float: left;
   letter-spacing: -15px;
 }
+.notes.linux {
+  margin-left: 65px;
+}
+.note.linux {
+  margin-right: 19px;
+  font-size: 65px;
+  margin-top: -11px;
+}
 .note { margin-right: 5px }
 .note:after { content: '\2669' }
 .move {
@@ -236,6 +248,7 @@ ul.black-label { margin-left: 22px }
 }
 .ledger.move { margin-left: 469px }
 .flat.move { margin-left: 450px }
+.ledger.move.linux { margin-left: 463px }
 .note-correct { color:#83bbdf }
 .note-wrong { color: red }
 .flat:before {
@@ -257,5 +270,8 @@ ul.black-label { margin-left: 22px }
 .ledger {
   margin-left: -29px;
   padding-top: 21px;
+}
+.ledger.linux {
+  margin-left: -32px;
 }
 .ledger:after { content: '_' }

@@ -184,6 +184,11 @@ game.start = function() {
   game.$notation = $('.notation');
   game.notes = document.querySelector('.notes');
 
+  // check operating system
+  game.isLinux = window.navigator.platform.indexOf('Linux') !== -1;
+  if (game.isLinux) $('.notes').addClass('linux');
+  if (game.isLinux) $('.clef').addClass('linux');
+
   // initialise controls
   $('.playpos-top').addClass('playpos-hide');
   $('.playpos-bottom').addClass('playpos-hide');
@@ -202,6 +207,7 @@ game.start = function() {
       case 'note':
         element.classList.add('note');
         element.id = 'note'+noteID;
+        if (game.isLinux) element.classList.add('linux');
         element.classList.add(game.manuscript[noteID]);
         game.notes.appendChild(element);
         break;
@@ -212,6 +218,7 @@ game.start = function() {
         break;
       case 'ledger':
         element.classList.add('ledger');
+        if (game.isLinux) element.classList.add('linux');
         game.notes.appendChild(element);
         break;
       default:
