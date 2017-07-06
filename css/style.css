@@ -24,6 +24,9 @@ h2, h3 {
 h3 {
   font-size: 16px;
 }
+.none {
+  display: none; 
+}
 .inputs {
   margin: 5px;
   display: inline-block;

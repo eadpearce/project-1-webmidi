@@ -116,6 +116,7 @@ game.midiStart = function() {
 
   $('.midi-inputs-length').text(`${devices.length} input device(s) found!`);
   const $midiInputs = $('.midi-inputs');
+  $midiInputs.removeClass('none');
   $midiInputs.empty().html('<option value="0">Select device</option>');
 
   $midiInputs.off();
