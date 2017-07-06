@@ -23,15 +23,15 @@ game.seq = {
   4: { length: 6,  score: 4, notes: [0,2,4,5,6,8,9,11], phraseLength: 5 }, // A min
   5: { length: 7,  score: 5, notes: [0,2,3,4,6,7,9,11], phraseLength: 5 }, // E min
   6: { length: 8,  score: 6, notes: [1,2,4,6,8,10,11],  phraseLength: 5 }, // B min
-  7: { length: 10, score: 7, notes: [1,3,5,6,8,10,11],  phraseLength: 7 } // F# maj 
+  7: { length: 10, score: 7, notes: [1,3,5,6,8,10,11],  phraseLength: 7 } // F# maj
 };
 game.move = {
-  1: { length: 3, notes: game.seq[1].notes, score: 1},
-  2: { length: 4, notes: game.seq[2].notes, score: 2 },
-  3: { length: 5, notes: game.seq[3].notes, score: 3 },
-  4: { length: 6, notes: game.seq[4].notes, score: 4 },
-  5: { length: 7, notes: game.seq[5].notes, score: 5 },
-  6: { length: 8, notes: game.seq[6].notes, score: 6 },
+  1: { length: 3,  notes: game.seq[1].notes, score: 1},
+  2: { length: 4,  notes: game.seq[2].notes, score: 2 },
+  3: { length: 5,  notes: game.seq[3].notes, score: 3 },
+  4: { length: 6,  notes: game.seq[4].notes, score: 4 },
+  5: { length: 7,  notes: game.seq[5].notes, score: 5 },
+  6: { length: 8,  notes: game.seq[6].notes, score: 6 },
   7: { length: 10, notes: game.seq[7].notes, score: 7 }
 };
 game.chord = {
