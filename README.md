@@ -5,24 +5,23 @@
 
 ### Introduction
 
-This is V2 of my first project for WDI26 [*Piano Hero*](https://github.com/eadpearce/wdi-project-1) (more info on this project is in the readme for this repo) now with MIDI controller support using [WebMidi.js](https://github.com/cotejp/webmidi). Just plug in your MIDI keyboard, click 'Detect MIDI input', select your device from the dropdown list, then play! 
+This is V2 of my first project for WDI26 [*Piano Hero*](https://github.com/eadpearce/wdi-project-1) (more info on this project is in the readme for this repo) now with MIDI controller support using [WebMidi.js](https://github.com/cotejp/webmidi). Just plug in your MIDI keyboard, click 'Detect MIDI input', select your device from the dropdown list, then play!
 
 ### Tools Used
 * Audacity
 * Javascript, HTML5, CSS
 * jQuery
-* WebMidi.js 
+* WebMidi.js
 * reset.css
 
 
 ### Future Plans...
-New features I may add in future: 
+New features I may add in future:
 
 * A bank of well-known tunes for you and the computer to play
 * Backing tracks
-* Metronome 
+* Metronome
 * Different samples for the keys
-* MIDI support using WebMidi.js <https://github.com/cotejp/webmidi>
 
 
 ### Credits
